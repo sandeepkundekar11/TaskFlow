@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const AdministratorSchema = Schema({
+const AdministratorSchema = new Schema({
   name: { type: String },
   email: { type: String },
   password: { type: String },

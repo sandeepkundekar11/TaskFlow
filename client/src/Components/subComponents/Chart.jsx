@@ -26,7 +26,7 @@ const DashbaordChart = () => {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                <Legend iconSize={10} layout="vertical" verticalAlign="middle" />
+                <Legend  iconSize={20} layout="vertical" verticalAlign="middle" align='center' />
 
             </PieChart>
         </ResponsiveContainer>

@@ -26,8 +26,8 @@ const App = () => {
           <Route path="/userlogin" element={<h1>user Login</h1>} />
 
           {/* administrative Private Routes */}
-          <Route path="/admin/" element={<AdminPrivateComp />}>
-            <Route path="dashobaord" element={<AdminiStrativeDashboard />} />
+          <Route path="/admin" element={<AdminPrivateComp />}>
+            <Route path="" element={<AdminiStrativeDashboard />} />
           </Route>
 
           {/* user Private Routes */}

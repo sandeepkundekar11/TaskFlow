@@ -7,13 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MdDelete } from "react-icons/md";
-import CustomPopupProvider from "../Popups/PopupProvider";
-import { Button } from "../ui/button";
 import { useState } from "react";
+import { MdDelete } from "react-icons/md";
+import AddUserPopup from "../Popups/AddUserPopup";
+import { Button } from "../ui/button";
+import ToolTipButton from "./TooltipButton";
 
 const AdminUsers = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const[showPopup,setShowPopup]=useState(false)
   const users = [
     {
       id: 1,
@@ -21,6 +22,12 @@ const AdminUsers = () => {
       email: "sandeep@gmail.com",
       TotalTask: 40,
     },
+    {
+      id: 2,
+      name: "Anilk",
+      email: "Anilk@gmail.com",
+      TotalTask: 34,
+    }
   ];
   return (
     <div className="w-[95%]">
@@ -61,7 +68,10 @@ const AdminUsers = () => {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <MdDelete className="w-6 text-2xl h-8 text-red-500 font-semibold" />
+                    <ToolTipButton ToolTipcontent="Delete User">
+                      <MdDelete className="w-6 text-2xl h-8 text-red-500 font-semibold" />
+                    </ToolTipButton>
+
                   </TableCell>
                 </TableRow>
               );
@@ -70,21 +80,16 @@ const AdminUsers = () => {
         </Table>
       </div>
       {/* add user button */}
-      <CustomPopupProvider
-        buttonName="Add New User"
-        Heading={"Add User"}
-        HandleSave={() => {
-          setIsOpen(false);
-        }}
-        isOpen={isOpen}
-        seIsOpen={setIsOpen}
-      >
-        <input
-          type="text"
-          className="form-control mb-2 mr-sm-2"
-          placeholder="Jane Doe"
-        />
-      </CustomPopupProvider>
+
+      <Button className="mt-3 w-28 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600" onClick={() => {
+        setShowPopup(true)
+      }}>Add New User</Button>
+      
+
+      {
+        showPopup&&
+        <AddUserPopup onSendInvitation={()=>{}} onCancel={()=>setShowPopup(false)}/>
+      }
     </div>
   );
 };

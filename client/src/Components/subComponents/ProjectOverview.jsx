@@ -9,13 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import CustomPopupProvider from "../Popups/PopupProvider";
-import AvatarGroup from "./AvatarGroup";
-import AddProject from "../Popups/AddProject";
 import { useState } from "react";
+import AddProject from "../Popups/AddProject";
+import AvatarGroup from "./AvatarGroup";
 
 const ProjectOverView = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [Title, setTitle] = useState("")
+  const ComponentArr = [
+    {
+      title: "addProject",
+      comp: <AddProject title="Add New Project" onCancel={() => setTitle("")} />
+    },
+    {
+      title: "updateProject",
+      comp: <AddProject title="Updated The Project" onCancel={() => setTitle("")} isToUpdate={true} />
+    }
+  ]
+
+  const ReturnComponent = (givenTitle) => {
+    let Component = ComponentArr.find((ele) => ele.title === givenTitle)
+    if (!Component) {
+      return <></>
+    }
+    else {
+      return Component.comp
+    }
+  }
+
   const Projects = [
     {
       id: 1,
@@ -54,6 +74,8 @@ const ProjectOverView = () => {
       status: "pending",
     },
   ];
+
+
   return (
     <div className="w-[95%]">
       <div className="table h-[60vh]  w-full overflow-x-scroll bg-slate-50">
@@ -90,17 +112,9 @@ const ProjectOverView = () => {
                     <Badge variant="outline">{ele?.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    <CustomPopupProvider
-                      buttonName="Edit"
-                      Heading={"Update The Project"}
-                      HandleSave={() => {
-                        setIsOpen(false);
-                      }}
-                      isOpen={isOpen}
-                      seIsOpen={setIsOpen}
-                    >
-                      <AddProject />
-                    </CustomPopupProvider>
+                    <Button className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500" onClick={() => {
+                      setTitle("updateProject")
+                    }}>Updated</Button>
                   </TableCell>
                   <TableCell className="flex justify-center">
                     <Button variant="link" className=" w-32 text-blue-500">
@@ -114,20 +128,15 @@ const ProjectOverView = () => {
         </Table>
       </div>
       {/* add task Button */}
+      <Button className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600" onClick={() => {
+        setTitle("addProject")
+      }}>Add Project</Button>
 
-      {/* <Button className="bg-blue-600 w-40 h-10 hover:bg-blue-500 m-auto">Add Project</Button> */}
+      {/* popups */}
+      {
+        ReturnComponent(Title)
+      }
 
-      <CustomPopupProvider
-        buttonName="Add Project"
-        Heading={"Add New Project"}
-        HandleSave={() => {
-          setIsOpen(false);
-        }}
-        isOpen={isOpen}
-        seIsOpen={setIsOpen}
-      >
-        <AddProject />
-      </CustomPopupProvider>
     </div>
   );
 };

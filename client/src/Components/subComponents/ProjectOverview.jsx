@@ -10,10 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddProject from "../Popups/AddProject";
 import AvatarGroup from "./AvatarGroup";
 
 const ProjectOverView = () => {
+  const Navigate=useNavigate()
   const [Title, setTitle] = useState("")
   const ComponentArr = [
     {
@@ -117,7 +119,9 @@ const ProjectOverView = () => {
                     }}>Updated</Button>
                   </TableCell>
                   <TableCell className="flex justify-center">
-                    <Button variant="link" className=" w-32 text-blue-500">
+                    <Button variant="link" className=" w-32 text-blue-500" onClick={()=>{
+                       Navigate(`${ele?.id}/view`)
+                    }}>
                       View
                     </Button>
                   </TableCell>

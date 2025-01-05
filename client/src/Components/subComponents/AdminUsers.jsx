@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { MdDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import AddUserPopup from "../Popups/AddUserPopup";
 import { Button } from "../ui/button";
 import ToolTipButton from "./TooltipButton";
 
 const AdminUsers = () => {
+  const Navigate=useNavigate()
   const[showPopup,setShowPopup]=useState(false)
   const users = [
     {
@@ -63,7 +65,9 @@ const AdminUsers = () => {
                     {ele?.TotalTask}
                   </TableCell>
                   <TableCell className="flex justify-center">
-                    <Button variant="link" className=" w-32 text-blue-500">
+                    <Button variant="link" className=" w-32 text-blue-500" onClick={()=>{
+                      Navigate(`${ele.id}/viewUser`)
+                    }}>
                       View
                     </Button>
                   </TableCell>

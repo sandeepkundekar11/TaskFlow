@@ -6,6 +6,8 @@
     --radius: 0.5rem
   }
 }
+
+
 .popup
 {
   position:fixed;
@@ -13,4 +15,21 @@
   left: 0;
   z-index: 999;
   background-color: rgba(212, 212, 212, 0.415);
+}
+.logcontainer
+{
+  overflow-x: hidden;
+}
+::-webkit-scrollbar
+{
+  width: 10px;
+  height: 20px;
+}
+
+::-webkit-scrollbar-thumb
+{
+  height: 10px;
+  width: 8px;
+  background-color:gray;
+  border-radius: 10px;
 }

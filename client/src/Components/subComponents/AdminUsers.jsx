@@ -8,15 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AddUserPopup from "../Popups/AddUserPopup";
 import { Button } from "../ui/button";
 import ToolTipButton from "./TooltipButton";
 
 const AdminUsers = () => {
-  const Navigate=useNavigate()
-  const[showPopup,setShowPopup]=useState(false)
+  const Navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
   const users = [
     {
       id: 1,
@@ -29,10 +28,10 @@ const AdminUsers = () => {
       name: "Anilk",
       email: "Anilk@gmail.com",
       TotalTask: 34,
-    }
+    },
   ];
   return (
-    <div className="w-[95%]">
+    <div className="w-[85%]">
       <div className="table h-[60vh]  w-full overflow-x-scroll bg-slate-50">
         <Table>
           <TableCaption>A list of your All Users</TableCaption>
@@ -65,17 +64,22 @@ const AdminUsers = () => {
                     {ele?.TotalTask}
                   </TableCell>
                   <TableCell className="flex justify-center">
-                    <Button variant="link" className=" w-32 text-blue-500" onClick={()=>{
-                      Navigate(`${ele.id}/viewUser`)
-                    }}>
+                    <Button
+                      variant="link"
+                      className=" w-32 text-blue-500"
+                      onClick={() => {
+                        Navigate(`${ele.id}/viewUser`);
+                      }}
+                    >
                       View
                     </Button>
                   </TableCell>
                   <TableCell>
                     <ToolTipButton ToolTipcontent="Delete User">
-                      <MdDelete className="w-6 text-2xl h-8 text-red-500 font-semibold" />
+                      <Button variant="destructive" size="sm" className="ml-2">
+                        Remove
+                      </Button>
                     </ToolTipButton>
-
                   </TableCell>
                 </TableRow>
               );
@@ -85,15 +89,21 @@ const AdminUsers = () => {
       </div>
       {/* add user button */}
 
-      <Button className="mt-3 w-28 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600" onClick={() => {
-        setShowPopup(true)
-      }}>Add New User</Button>
-      
+      <Button
+        className="mt-3 w-28 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600"
+        onClick={() => {
+          setShowPopup(true);
+        }}
+      >
+        Add New User
+      </Button>
 
-      {
-        showPopup&&
-        <AddUserPopup onSendInvitation={()=>{}} onCancel={()=>setShowPopup(false)}/>
-      }
+      {showPopup && (
+        <AddUserPopup
+          onSendInvitation={() => {}}
+          onCancel={() => setShowPopup(false)}
+        />
+      )}
     </div>
   );
 };

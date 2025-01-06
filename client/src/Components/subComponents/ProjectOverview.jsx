@@ -15,28 +15,35 @@ import AddProject from "../Popups/AddProject";
 import AvatarGroup from "./AvatarGroup";
 
 const ProjectOverView = () => {
-  const Navigate=useNavigate()
-  const [Title, setTitle] = useState("")
+  const Navigate = useNavigate();
+  const [Title, setTitle] = useState("");
   const ComponentArr = [
     {
       title: "addProject",
-      comp: <AddProject title="Add New Project" onCancel={() => setTitle("")} />
+      comp: (
+        <AddProject title="Add New Project" onCancel={() => setTitle("")} />
+      ),
     },
     {
       title: "updateProject",
-      comp: <AddProject title="Updated The Project" onCancel={() => setTitle("")} isToUpdate={true} />
-    }
-  ]
+      comp: (
+        <AddProject
+          title="Updated The Project"
+          onCancel={() => setTitle("")}
+          isToUpdate={true}
+        />
+      ),
+    },
+  ];
 
   const ReturnComponent = (givenTitle) => {
-    let Component = ComponentArr.find((ele) => ele.title === givenTitle)
+    let Component = ComponentArr.find((ele) => ele.title === givenTitle);
     if (!Component) {
-      return <></>
+      return <></>;
+    } else {
+      return Component.comp;
     }
-    else {
-      return Component.comp
-    }
-  }
+  };
 
   const Projects = [
     {
@@ -77,9 +84,8 @@ const ProjectOverView = () => {
     },
   ];
 
-
   return (
-    <div className="w-[95%]">
+    <div className="w-[85%]">
       <div className="table h-[60vh]  w-full overflow-x-scroll bg-slate-50">
         <Table>
           <TableCaption>A list of all Available Projects</TableCaption>
@@ -114,14 +120,23 @@ const ProjectOverView = () => {
                     <Badge variant="outline">{ele?.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Button className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500" onClick={() => {
-                      setTitle("updateProject")
-                    }}>Updated</Button>
+                    <Button
+                      className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500"
+                      onClick={() => {
+                        setTitle("updateProject");
+                      }}
+                    >
+                      Updated
+                    </Button>
                   </TableCell>
                   <TableCell className="flex justify-center">
-                    <Button variant="link" className=" w-32 text-blue-500" onClick={()=>{
-                       Navigate(`${ele?.id}/view`)
-                    }}>
+                    <Button
+                      variant="link"
+                      className=" w-32 text-blue-500"
+                      onClick={() => {
+                        Navigate(`${ele?.id}/view`);
+                      }}
+                    >
                       View
                     </Button>
                   </TableCell>
@@ -132,15 +147,17 @@ const ProjectOverView = () => {
         </Table>
       </div>
       {/* add task Button */}
-      <Button className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600" onClick={() => {
-        setTitle("addProject")
-      }}>Add Project</Button>
+      <Button
+        className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600"
+        onClick={() => {
+          setTitle("addProject");
+        }}
+      >
+        Add Project
+      </Button>
 
       {/* popups */}
-      {
-        ReturnComponent(Title)
-      }
-
+      {ReturnComponent(Title)}
     </div>
   );
 };

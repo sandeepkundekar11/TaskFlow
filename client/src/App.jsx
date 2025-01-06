@@ -16,9 +16,13 @@ const AdminiStrativeDashboard = React.lazy(() =>
   import("./Components/MainComponents/admin/AdministrativeDashboard.jsx")
 );
 
-const ViewProject = React.lazy(() => import("./Components/MainComponents/admin/ViewProject.jsx"))
+const ViewProject = React.lazy(() =>
+  import("./Components/MainComponents/admin/ViewProject.jsx")
+);
 
-const AdminUserView = React.lazy(() => import("./Components/MainComponents/admin/AdminUserView"))
+const AdminUserView = React.lazy(() =>
+  import("./Components/MainComponents/admin/AdminUserView")
+);
 const App = () => {
   return (
     <Suspense fallback={<h1>Loading....</h1>}>
@@ -33,7 +37,7 @@ const App = () => {
           <Route path="/admin" element={<AdminPrivateComp />}>
             <Route path="" element={<AdminiStrativeDashboard />} />
             <Route path=":id/view" element={<ViewProject />} />
-            <Route path=":userid/viewUser" element={<AdminUserView />}/>
+            <Route path=":userid/viewUser" element={<AdminUserView />} />
           </Route>
 
           {/* user Private Routes */}

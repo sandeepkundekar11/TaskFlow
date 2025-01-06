@@ -23,6 +23,11 @@ const ViewProject = React.lazy(() =>
 const AdminUserView = React.lazy(() =>
   import("./Components/MainComponents/admin/AdminUserView")
 );
+// user
+
+const UserLoginPage = React.lazy(() => import("./Components/MainComponents/user/UserLogin"))
+const UserHome = React.lazy(() => import("./Components/MainComponents/user/UserHome"))
+
 const App = () => {
   return (
     <Suspense fallback={<h1>Loading....</h1>}>
@@ -31,7 +36,7 @@ const App = () => {
           <Route path="/" element={<AddMinistratorSignup />} />
           <Route path="/administrativeLogin" element={<AdministartorLogin />} />
           {/* normal user login */}
-          <Route path="/userlogin" element={<h1>user Login</h1>} />
+          <Route path="/userlogin" element={<UserLoginPage />} />
 
           {/* administrative Private Routes */}
           <Route path="/admin" element={<AdminPrivateComp />}>
@@ -42,7 +47,7 @@ const App = () => {
 
           {/* user Private Routes */}
           <Route path="/user/" element={<UserPrivateComp />}>
-            <Route path="userdashboard" element={<h1>User Dashboard</h1>} />
+            <Route path="home" element={<UserHome />} />
           </Route>
         </Routes>
       </BrowserRouter>

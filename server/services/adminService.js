@@ -25,6 +25,36 @@ class AdminService {
       throw error;
     }
   }
+
+  async LoginUser(info) {
+    try {
+      let userExist = await AdminReppsitory.findAdminByEmail(info.email);
+      if (!userExist) {
+        return {
+          status: 404,
+          message: "user not found",
+        };
+      }
+
+      let token = await jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
+      let checkPassword = bcrypt.compare(info.password, userExist.password);
+      if (!checkPassword) {
+        return {
+          status: 401,
+          message: "Wrong password",
+        };
+      }
+
+      return {
+        status: 200,
+        token: token,
+        user: userExist,
+      };
+    } catch (error) {
+      console.error("Error while creating admin:", error);
+      throw error;
+    }
+  }
 }
 
 export default new AdminService();

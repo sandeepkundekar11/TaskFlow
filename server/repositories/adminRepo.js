@@ -31,9 +31,10 @@ class AdminReppsitory {
     }
   }
 
-  async createUserInCompany({ name, email, companyId }) {
+  async createUserInCompany(userInfo) {
+    //{ name, email, companyId }
     try {
-      return UserModel.create({ email: email, name: name, company: companyId });
+      return UserModel.create(userInfo);
     } catch (error) {
       console.log("error occured while creating new user in to the company");
       throw error;

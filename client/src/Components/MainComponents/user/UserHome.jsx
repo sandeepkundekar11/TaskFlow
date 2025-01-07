@@ -21,7 +21,7 @@ const UserHome = () => {
                     </CardHeader>
                     <CardContent className=""></CardContent>
                     <CardFooter>
-                        <Button className="w-full h-10 bg-slate-200 hover:bg-slate-300 text-black rounded-md"> see more..</Button>
+                        <Button className="w-full h-10 bg-slate-200 hover:bg-slate-300 text-lg text-black rounded-md"> see more..</Button>
                     </CardFooter>
                 </Card>
             </div>

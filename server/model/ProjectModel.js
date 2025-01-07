@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const ProjectSchema = Schema({
+const ProjectSchema = new Schema({
   name: { type: String },
   description: { type: String },
   startTime: { type: Date, default: Date.now },

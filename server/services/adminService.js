@@ -1,6 +1,6 @@
-import AdminReppsitory from "../repositories/adminRepo.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import AdminReppsitory from "../repositories/adminRepo.js";
 import MailSender from "../Utility/MailSender.js";
 class AdminService {
   // signup service
@@ -78,10 +78,11 @@ class AdminService {
       }
 
       // creating user in company
+      //{ email: email, name: name, company: companyId }
       let createUserInCompany = await AdminReppsitory.createUserInCompany({
         name: username,
         email: userEmail,
-        companyId,
+        company: companyId
       });
 
       if (createUserInCompany) {

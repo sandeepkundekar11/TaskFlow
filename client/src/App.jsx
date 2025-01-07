@@ -46,8 +46,8 @@ const App = () => {
           </Route>
 
           {/* user Private Routes */}
-          <Route path="/user/" element={<UserPrivateComp />}>
-            <Route path="home" element={<UserHome />} />
+          <Route path="/user" element={<UserPrivateComp />}>
+            <Route path="" element={<UserHome />} />
           </Route>
         </Routes>
       </BrowserRouter>

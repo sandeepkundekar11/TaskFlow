@@ -1,15 +1,18 @@
-import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 import AsyncHandler from "express-async-handler";
-
+import nodemailer from "nodemailer";
+dotenv.config({ path: "./config.env" });
 const MailSender = AsyncHandler(
   async ({ senderEmail, receiverEmail, receiverName }) => {
+    console.log({  user: process.env.EMAIL,
+        pass: process.env.APP_PASSWORD,})
     const transporter = nodemailer.createTransport({
       host: "smtp.ethereal.email",
       port: 587,
       secure: false, // true for port 465, false for other ports
       auth: {
-        user: "maddison53@ethereal.email",
-        pass: "jn7jnAPss4f63QBp6D",
+        user: process.env.EMAIL,
+        pass: process.env.APP_PASSWORD,
       },
     });
 
@@ -94,7 +97,11 @@ const MailSender = AsyncHandler(
 </body>
 </html>
 `, // html body
-    });
+    }).then((message)=>{
+        console.log(message)
+    }).catch((err)=>{
+        console.log(err.message,)
+    })
 
     return info;
   }

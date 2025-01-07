@@ -45,5 +45,35 @@ class AdminController {
       return res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  // add user in company controller
+
+  async addUserToCompanyController(req, res) {
+    try {
+      const { companyEmail, username, userEmail } = req.body;
+
+      if (!companyEmail || !username || !userEmail) {
+        return res
+          .status(403)
+          .json({ message: "please provide all information" });
+      }
+      const companyId = req.userId;
+      const Info = {
+        companyEmail,
+        companyId,
+        username,
+        userEmail,
+      };
+      let response = await adminService.AddUserToCompanyService(Info);
+
+      if (response) {
+        return res.status(response.status).json({
+          message: response.message,
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 }
 export default new AdminController();

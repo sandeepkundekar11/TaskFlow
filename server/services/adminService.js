@@ -1,7 +1,9 @@
 import AdminReppsitory from "../repositories/adminRepo.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import MailSender from "../Utility/MailSender.js";
 class AdminService {
+  // signup service
   async SignupAdmin(info) {
     try {
       const isAdminExist = await AdminReppsitory.findAdminByEmail(info.email);
@@ -18,7 +20,7 @@ class AdminService {
         company: info.company,
       };
       const admin = await AdminReppsitory.createAdmin(adminInfo);
-      let token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET);
+      let token = jwt.sign({ user: admin }, process.env.JWT_SECRET);
       return { status: 200, token, user: admin };
     } catch (error) {
       console.error("Error while creating admin:", error);
@@ -26,6 +28,7 @@ class AdminService {
     }
   }
 
+  // login service
   async LoginUser(info) {
     try {
       let userExist = await AdminReppsitory.findAdminByEmail(info.email);
@@ -36,7 +39,7 @@ class AdminService {
         };
       }
 
-      let token = await jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
+      let token = jwt.sign({ user: userExist }, process.env.JWT_SECRET);
       let checkPassword = bcrypt.compare(info.password, userExist.password);
       if (!checkPassword) {
         return {
@@ -53,6 +56,55 @@ class AdminService {
     } catch (error) {
       console.error("Error while creating admin:", error);
       throw error;
+    }
+  }
+
+  // adding the user in the project
+  async AddUserToCompanyService({
+    companyEmail,
+    companyId,
+    username,
+    userEmail,
+  }) {
+    try {
+      // checking user is already added in  comany or not
+      let IsuserAdded = await AdminReppsitory.findUserInCompany(
+        companyId,
+        userEmail
+      );
+      console.log(IsuserAdded);
+      if (IsuserAdded) {
+        return { status: 403, message: "user already added" };
+      }
+
+      // creating user in company
+      let createUserInCompany = await AdminReppsitory.createUserInCompany({
+        name: username,
+        email: userEmail,
+        companyId,
+      });
+
+      if (createUserInCompany) {
+        let mailInfo = {
+          senderEmail: companyEmail,
+          receiverEmail: userEmail,
+          receiverName: username,
+        };
+        //sending the inivtation mail
+        let mail = await MailSender(mailInfo);
+
+        if (mail) {
+          return {
+            status: 200,
+            message: "User added and Initation is Been send",
+          };
+        }
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
     }
   }
 }

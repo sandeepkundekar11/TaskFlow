@@ -14,7 +14,8 @@ const userAuth = AsyncHandler(async (req, res, next) => {
     if (!decodeInfo) {
       return res.status(401).json({ message: "user is not authorized" });
     }
-    req.userId = decodeInfo._id;
+    // console.log(decodeInfo);
+    req.userId = decodeInfo?.user?._id;
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });

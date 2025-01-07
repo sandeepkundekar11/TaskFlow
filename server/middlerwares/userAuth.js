@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import AsyncHandler from "express-async-handler";
+import jwt from "jsonwebtoken";
 
 const userAuth = AsyncHandler(async (req, res, next) => {
   try {
@@ -16,6 +16,7 @@ const userAuth = AsyncHandler(async (req, res, next) => {
     }
     // console.log(decodeInfo);
     req.userId = decodeInfo?.user?._id;
+    req.userEmail=decodeInfo?.user?.email
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });

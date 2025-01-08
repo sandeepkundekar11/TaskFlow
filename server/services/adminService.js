@@ -62,6 +62,7 @@ class AdminService {
   // adding the user in the project
   async AddUserToCompanyService({
     companyEmail,
+    senderName,
     companyId,
     username,
     userEmail,
@@ -82,12 +83,13 @@ class AdminService {
       let createUserInCompany = await AdminReppsitory.createUserInCompany({
         name: username,
         email: userEmail,
-        company: companyId
+        company: companyId,
       });
 
       if (createUserInCompany) {
         let mailInfo = {
           senderEmail: companyEmail,
+          senderName: senderName,
           receiverEmail: userEmail,
           receiverName: username,
         };

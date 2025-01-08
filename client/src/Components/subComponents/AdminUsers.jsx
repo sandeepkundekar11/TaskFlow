@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import AddUserPopup from "../Popups/AddUserPopup";
 import { Button } from "../ui/button";
 import ToolTipButton from "./TooltipButton";
+import { Badge } from "@/components/ui/badge";
 
 const AdminUsers = () => {
   const Navigate = useNavigate();
@@ -20,12 +21,14 @@ const AdminUsers = () => {
     {
       id: 1,
       name: "sandeep n K",
+      status: "Available",
       email: "sandeep@gmail.com",
       TotalTask: 40,
     },
     {
       id: 2,
       name: "Anilk",
+      status: "Pending",
       email: "Anilk@gmail.com",
       TotalTask: 34,
     },
@@ -41,6 +44,7 @@ const AdminUsers = () => {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Total Task Created</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="flex justify-center items-center">
                 View User
               </TableHead>
@@ -62,6 +66,9 @@ const AdminUsers = () => {
                   </TableCell>
                   <TableCell className="font-medium text-base">
                     {ele?.TotalTask}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{ele.status}</Badge>
                   </TableCell>
                   <TableCell className="flex justify-center">
                     <Button

@@ -5,19 +5,19 @@ const ActivitySchema = Schema({
     type: Types.ObjectId,
     ref: "user",
   },
-  logtype: {
+  action: {
     type: String,
     enum: ["Create", "Update"],
   },
-  timeStamp: {
-    type: Date,
-    default: Date.now(),
-  },
-  discription: {
+  task: {
     type: String,
   },
   TaskId: {
     type: String,
+  },
+  timeStamp: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

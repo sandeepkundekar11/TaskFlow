@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import UserNavbar from "../subComponents/userNavBar";
 
 const UserPrivateComp = () => {
   const [isValidUser, setIsValidUser] = useState(true);
@@ -12,6 +13,9 @@ const UserPrivateComp = () => {
       setIsValidUser(false);
     }
   }, []);
-  return <>{isValidUser ? <Outlet /> : <Navigate to="/user/login" />}</>;
+  return <>{isValidUser ? <>
+    <UserNavbar />
+    <Outlet /> </> :
+    <Navigate to="/userlogin" />}</>;
 };
 export default UserPrivateComp;

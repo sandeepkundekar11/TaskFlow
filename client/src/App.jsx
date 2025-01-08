@@ -27,7 +27,7 @@ const AdminUserView = React.lazy(() =>
 
 const UserLoginPage = React.lazy(() => import("./Components/MainComponents/user/UserLogin"))
 const UserHome = React.lazy(() => import("./Components/MainComponents/user/UserHome"))
-
+const UserProject = React.lazy(() => import("./Components/MainComponents/user/UserProject"))
 const App = () => {
   return (
     <Suspense fallback={<h1>Loading....</h1>}>
@@ -48,6 +48,7 @@ const App = () => {
           {/* user Private Routes */}
           <Route path="/user" element={<UserPrivateComp />}>
             <Route path="" element={<UserHome />} />
+            <Route path=":projectId/project" element={<UserProject />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,6 +1,5 @@
 import ActivityFeedCard from "@/Components/subComponents/ActivityFeedCard";
 import ProjectCard from "@/Components/subComponents/ProjectCard";
-import UserNavbar from "@/Components/subComponents/userNavBar.jsx";
 import { Button } from "@/Components/ui/button";
 import {
   Card,
@@ -10,33 +9,40 @@ import {
 } from "@/Components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserHome = () => {
+  const navigate = useNavigate()
   const [activity, setActivity] = useState([]);
   const projects = [
     {
+      id: 1,
       projectName: "TaskFlow",
       description:
         "A task management tool to streamline project workflows and team collaboration.",
       users: ["Alice Johnson", "Bob Smith", "Charlie Brown"],
     },
     {
+      id: 2,
       projectName: "QuizMaster",
       description: "An advanced quiz application for educational institutions.",
       users: ["Diana Prince", "Ethan Hunt", "Fiona Gallagher"],
     },
     {
+      id: 3,
       projectName: "HealthTrack",
       description:
         "A health monitoring app for tracking fitness and medical reports.",
       users: ["Grace Hopper", "Hank Pym", "Ivy Carter"],
     },
     {
+      id: 4,
       projectName: "ShopEase",
       description: "An e-commerce platform for seamless shopping experiences.",
       users: ["Jack Sparrow", "Kate Winslet", "Leonardo DiCaprio"],
     },
     {
+      id: 5,
       projectName: "EduConnect",
       description:
         "A platform to connect students with teachers for online learning.",
@@ -116,9 +122,7 @@ const UserHome = () => {
     }
   };
   return (
-    <div className="w-screen h-screen bg-slate-50">
-      <UserNavbar />
-
+    <div className="w-screen h-screen bg-slate-50 overflow-x-hidden">
       <div className=" h-auto pt-20 grid md:grid-cols-8 grid-cols-5 w-[95%] m-auto md:space-x-4 ">
         {/* displays all projects assigned to user */}
         <Card className="md:col-span-5 col-span-7 rounded-none max-h-[650px]">
@@ -133,7 +137,7 @@ const UserHome = () => {
             <ScrollArea className="h-[500px] w-full rounded-md  p-4 border">
               {/* mapping the Projects */}
               {projects.map((project, index) => {
-                return <ProjectCard key={index} info={project} />;
+                return <ProjectCard key={index} info={project} onView={() => navigate(`${project.id}/project`)} />;
               })}
             </ScrollArea>
           </CardContent>

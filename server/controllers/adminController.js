@@ -50,17 +50,19 @@ class AdminController {
 
   async addUserToCompanyController(req, res) {
     try {
-      const {username, userEmail } = req.body;
+      const { username, userEmail } = req.body;
 
-      if ( !username || !userEmail) {
+      if (!username || !userEmail) {
         return res
           .status(403)
           .json({ message: "please provide all information" });
       }
       const companyId = req.userId;
-      const companyEmail = req.userEmail
+      const companyEmail = req.userEmail;
+      const senderName = req.userName;
       const Info = {
         companyEmail,
+        senderName,
         companyId,
         username,
         userEmail,

@@ -7,7 +7,6 @@ const userAuth = AsyncHandler(async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "provide the token" });
     }
-
     // validating the token
 
     let decodeInfo = jwt.verify(token, process.env.JWT_SECRET);
@@ -16,7 +15,8 @@ const userAuth = AsyncHandler(async (req, res, next) => {
     }
     // console.log(decodeInfo);
     req.userId = decodeInfo?.user?._id;
-    req.userEmail=decodeInfo?.user?.email
+    req.userEmail = decodeInfo?.user?.email;
+    req.userName = decodeInfo?.user?.name;
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });

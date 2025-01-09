@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Card, CardContent } from "@/Components/ui/card";
 import CustomTaskAccordian from "./CustomAccordian";
 
 const ProjectStatus = () => {
   return (
-    <div className="w-[95%] p-4">
+    <div className="w-[95%] p-4 overflow-x-hidden">
       <h1 className="text-2xl font-semibold">QuizMaster</h1>
       <p className="text-base mt-2 text-gray-600">
         An advanced quiz application for educational institutions.
@@ -27,26 +27,30 @@ const ProjectStatus = () => {
           </ul>
 
           {/* Here Main Task will come */}
-          <CustomTaskAccordian
-            TaskId={"SP-1"}
-            TaskTitle={"this is Task 1 this is Task 1"}
-          >
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-            <h1>hellow</h1>
-          </CustomTaskAccordian>
+
+          {
+            [1, 2, 3, 4, 5].map((task) => {
+              return (<CustomTaskAccordian key={task}
+                TaskId={"SP-1"}
+                TaskTitle={"this is Task 1 this is Task 1"}
+              >
+                {/* TODO, InProgress, and Done section */}
+                <div className="grid grid-cols-3 space-x-3 w-full">
+                  <div className="col-span-1 min-h-96 bg-gray-200">
+                    {/* here all TODO Tasks will come */}
+                  </div>
+                  <div className="col-span-1 min-h-96 bg-gray-200">
+                    {/* here all in progress Task will come */}
+                  </div>
+                  <div className="col-span-1 min-h-96 bg-gray-200">
+                    {/* here all done Task will come */}
+                  </div>
+                </div>
+              </CustomTaskAccordian>)
+            })
+          }
+
+
         </CardContent>
       </Card>
     </div>

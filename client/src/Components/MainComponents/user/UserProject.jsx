@@ -14,7 +14,7 @@ const UserProject = () => {
             Backlogs
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="Project" className="w-[95vw]">
+        <TabsContent value="Project" className="w-[95vw] overflow-x-hidden">
           <ProjectStatus />
         </TabsContent>
         <TabsContent value="backlogs" className="w-[95vw]">

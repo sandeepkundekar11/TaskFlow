@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
 const CustomTaskAccordian = ({
   className,
   TaskId,
@@ -21,9 +21,10 @@ const CustomTaskAccordian = ({
     setName(initials);
   }, []);
   return (
-    <div className="w-full bg-white mt-2 p-1 overflow-y-hidden">
-      <div className={`head h-10 ${className} bg-blue-50`}>
-        <div className="flex justify-between items-center">
+    <div className="w-full bg-white mt-2 px-2 overflow-y-hidden rounded-md">
+      {/*  */}
+      <div className={`head h-12 ${className} `}>
+        <div className="flex justify-between h-full px-3 items-center">
           <div className="flex">
             <p className="TaskId text-base font-bold">{TaskId}</p>
             <p className="taskTitle text-base font-semibold text-gray-700 ml-2">
@@ -37,7 +38,7 @@ const CustomTaskAccordian = ({
               </AvatarFallback>
             </Avatar>
 
-            <Button>Create SubTask</Button>
+            <Button variant="outline" className='w-28 h-9 text-sm'>Create SubTask</Button>
 
             <Button
               variant="outline"
@@ -48,8 +49,9 @@ const CustomTaskAccordian = ({
           </div>
         </div>
       </div>
+      {/*  */}
       <div
-        className={`body  w-full  transition  duration-200 ${
+        className={`body  w-full  transition  duration-200 p-0 ${
           showDropdown ? "h-auto" : "h-0"
         }`}
       >

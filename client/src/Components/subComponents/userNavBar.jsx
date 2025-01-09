@@ -8,10 +8,11 @@ import {
 import LogoComp from "./LogoComp"
 const UserNavbar = () => {
     return (
-        <Card className="w-screen h-16 absolute top-0 z-50 rounded-none flex justify-between items-center space-x-8 pr-3">
+        <Card className="w-screen h-16 fixed top-0 z-50 rounded-none flex justify-between items-center space-x-8 pr-3">
             <LogoComp />
             <div className="flex items-center space-x-8 cursor-pointer">
                 <ul className="flex h-full items-center space-x-8">
+                    <li className="font-bold">Home</li>
                     <li className="font-bold">SignOut</li>
                     <li className="font-bold">Profile</li>
                 </ul>

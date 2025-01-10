@@ -9,6 +9,7 @@ const CustomTaskAccordian = ({
   TaskTitle,
   Author = "new",
   children,
+  onAddTask,
 }) => {
   const [name, setName] = useState("a");
   const [showDropdown, setShoDropdown] = useState(false);
@@ -38,7 +39,13 @@ const CustomTaskAccordian = ({
               </AvatarFallback>
             </Avatar>
 
-            <Button variant="outline" className='w-28 h-9 text-sm'>Create SubTask</Button>
+            <Button
+              variant="outline"
+              className="w-28 h-9 text-sm"
+              onClick={onAddTask}
+            >
+              Create SubTask
+            </Button>
 
             <Button
               variant="outline"

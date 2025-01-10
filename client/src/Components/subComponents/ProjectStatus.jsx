@@ -1,7 +1,12 @@
 import { Card, CardContent } from "@/Components/ui/card";
 import CustomTaskAccordian from "./CustomAccordian";
+import DrgableTaskCard from "./DragebleTaskCard";
+import AddSubTask from "../Popups/AddSubTask";
+import { useState } from "react";
 
 const ProjectStatus = () => {
+  // based on this State we are showing and hidding the Add SubTask Popup
+  const [showAddSubTaskPopup, setShowAddTaskPopup] = useState(false);
   return (
     <div className="w-[95%] p-4 overflow-x-hidden">
       <h1 className="text-2xl font-semibold">QuizMaster</h1>
@@ -28,9 +33,13 @@ const ProjectStatus = () => {
 
           {/* Here Main Task will come */}
 
-          {
-            [1, 2, 3, 4, 5].map((task) => {
-              return (<CustomTaskAccordian key={task}
+          {[1, 2, 3, 4, 5].map((task) => {
+            return (
+              <CustomTaskAccordian
+                onAddTask={() => {
+                  setShowAddTaskPopup(true);
+                }}
+                key={task}
                 TaskId={"SP-1"}
                 TaskTitle={"this is Task 1 this is Task 1"}
               >
@@ -38,21 +47,33 @@ const ProjectStatus = () => {
                 <div className="grid grid-cols-3 space-x-3 w-full">
                   <div className="col-span-1 min-h-96 bg-gray-200">
                     {/* here all TODO Tasks will come */}
+                    {[1, 2, 3, 4].map((task) => {
+                      return <DrgableTaskCard key={task} />;
+                    })}
                   </div>
                   <div className="col-span-1 min-h-96 bg-gray-200">
                     {/* here all in progress Task will come */}
+                    {[1, 2].map((task) => {
+                      return <DrgableTaskCard key={task} />;
+                    })}
                   </div>
                   <div className="col-span-1 min-h-96 bg-gray-200">
                     {/* here all done Task will come */}
+                    {[1, 2, 3, 4, 5, 6, 7].map((task) => {
+                      return <DrgableTaskCard key={task} />;
+                    })}
                   </div>
                 </div>
-              </CustomTaskAccordian>)
-            })
-          }
-
-
+              </CustomTaskAccordian>
+            );
+          })}
         </CardContent>
       </Card>
+
+      {showAddSubTaskPopup && (
+        // add subTask Popup
+        <AddSubTask onCancel={() => setShowAddTaskPopup(false)} />
+      )}
     </div>
   );
 };

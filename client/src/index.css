@@ -3,33 +3,34 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 }
 
-
-.popup
-{
-  position:fixed;
+.popup {
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
   background-color: rgba(212, 212, 212, 0.415);
 }
-.logcontainer
-{
+.logcontainer {
   overflow-x: hidden;
 }
-::-webkit-scrollbar
-{
+::-webkit-scrollbar {
   width: 10px;
   height: 20px;
 }
 
-::-webkit-scrollbar-thumb
-{
+::-webkit-scrollbar-thumb {
   height: 10px;
   width: 8px;
-  background-color:gray;
+  background-color: gray;
   border-radius: 10px;
+}
+.task.dragging {
+  opacity: 1 !important; /* Keep fully visible */
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05); /* Slightly enlarge for emphasis */
 }

@@ -29,7 +29,7 @@ const AddSubTask = ({ onCancel, onSave }) => {
                 onSave(SubTask);
               }}
             >
-              Send message
+              Add SubTask
             </Button>
           </div>
         </div>

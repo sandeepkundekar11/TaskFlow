@@ -19,7 +19,6 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
   return (
     <Popup>
       <div className="w-[800px] h-auto p-4 bg-white rounded-md shadow-md">
-
         <div className="w-full">
           <div>
             <h1 className="text-xl font-medium mb-4 mt-2">{title}</h1>
@@ -43,7 +42,6 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
               />
             </div>
           </div>
-          
 
           {/* project Start and end Date */}
           <div className="grid w-full  items-center gap-1.5 mt-4 grid-cols-2">
@@ -66,8 +64,8 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
               />
             </div>
           </div>
-          {
-            isToUpdate && <div className="flex items-center space-x-2 mt-3">
+          {isToUpdate && (
+            <div className="flex items-center space-x-2 mt-3">
               <Checkbox id="terms" className="w-5 h-5 " />
               <label
                 htmlFor="terms"
@@ -76,7 +74,7 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
                 Toggle To Complete The Project
               </label>
             </div>
-          }
+          )}
 
           {/*  */}
           <div className="grid w-full  items-center gap-1.5 mt-4">
@@ -91,8 +89,18 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
         </div>
         {/* buttons */}
         <div className="flex space-x-5 mt-8 justify-end">
-          <Button className="w-32 h-9 text-base bg-blue-500 hover:bg-blue-600" onClick={onSave}>Save</Button>
-          <Button className="w-32 h-9 text-base bg-red-500 hover:bg-red-600" onClick={onCancel}>Cancel</Button>
+          <Button
+            className="w-32 h-9 text-base bg-blue-500 hover:bg-blue-600"
+            onClick={onSave}
+          >
+            Save
+          </Button>
+          <Button
+            className="w-32 h-9 text-base bg-red-500 hover:bg-red-600"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
         </div>
       </div>
     </Popup>

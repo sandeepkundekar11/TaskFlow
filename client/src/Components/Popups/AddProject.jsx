@@ -99,7 +99,7 @@ const AddProject = ({ title, onCancel, onSave, isToUpdate = false }) => {
             className="w-32 h-9 text-base bg-red-500 hover:bg-red-600"
             onClick={onCancel}
           >
-            Cancel11
+            Cancel
           </Button>
         </div>
       </div>

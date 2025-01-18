@@ -11,7 +11,26 @@ adminRouter.post(
   userAuth,
   adminController.addUserToCompanyController
 );
-// creating new project
 
-adminRouter.put("/createProject", userAuth, AdminProjectController.createNewProjectController)
+// creating new project
+adminRouter.put(
+  "/createProject",
+  userAuth,
+  AdminProjectController.createNewProjectController
+);
+
+// update the project
+adminRouter.put(
+  "/updateProject/:projectId",
+  userAuth,
+  AdminProjectController.updateProjectController
+);
+
+// get all users to add in the project
+
+adminRouter.get(
+  "/getuser",
+  userAuth,
+  AdminProjectController.getAllCompanyUsers
+);
 export default adminRouter;

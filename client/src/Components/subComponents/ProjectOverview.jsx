@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -86,19 +85,31 @@ const ProjectOverView = () => {
 
   return (
     <div className="w-[85%]">
-      <div className="table h-[60vh]  w-full overflow-x-scroll bg-slate-50">
-        <Table>
+      <div className="table h-[60vh]  w-full overflow-x-scroll">
+        {/* add task Button */}
+        <div className="flex justify-between items-center">
+          <h1 className="font-bold text-gray-600 text-2xl">Projects</h1>
+          <Button
+            className="mt-3 w-28 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600"
+            onClick={() => {
+              setTitle("addProject");
+            }}
+          >
+            + Add Project
+          </Button>
+        </div>
+        <Table className="mt-2">
           <TableCaption>A list of all Available Projects</TableCaption>
-          <TableHeader>
+          <TableHeader className="bg-slate-200">
             <TableRow>
               <TableHead className="w-[100px]">S .No</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>ActiveUsers</TableHead>
-              <TableHead>Task</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>TITLE</TableHead>
+              <TableHead>ACTIVE USERS</TableHead>
+              <TableHead>TASK</TableHead>
+              <TableHead>STATUS</TableHead>
               <TableHead></TableHead>
               <TableHead className="flex justify-center items-center">
-                View Project
+                ACTION
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -117,7 +128,17 @@ const ProjectOverView = () => {
                     {ele?.Task}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{ele?.status}</Badge>
+                    <div className="w-20 h-8 rounded-md  px-2 py-1">
+                      {ele?.status === "pending" ? (
+                        <p className="bg-yellow-300 text-yellow-950 w-full h-full flex justify-center items-center rounded-lg">
+                          {ele?.status}
+                        </p>
+                      ) : (
+                        <p className="bg-green-400 text-green-900 flex justify-center items-center h-full w-full rounded-lg">
+                          {ele?.status}
+                        </p>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Button
@@ -146,15 +167,6 @@ const ProjectOverView = () => {
           </TableBody>
         </Table>
       </div>
-      {/* add task Button */}
-      <Button
-        className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600"
-        onClick={() => {
-          setTitle("addProject");
-        }}
-      >
-        Add Project
-      </Button>
 
       {/* popups */}
       {ReturnComponent(Title)}

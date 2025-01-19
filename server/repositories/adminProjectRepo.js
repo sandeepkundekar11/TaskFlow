@@ -69,6 +69,18 @@ class AdminProjectRepo {
       console.log("Error occurred while getting the users", error.message);
     }
   }
+
+
+  //get all users
+
+  async getAllUsers(companyId) {
+    try {
+      return await UserModel.find({ company: companyId },"name email invitationStatus taskCount").populate("taskCount");
+    } catch (error) {
+      console.log("error occured while getting all users")
+    }
+  }
+
 }
 
 export default new AdminProjectRepo();

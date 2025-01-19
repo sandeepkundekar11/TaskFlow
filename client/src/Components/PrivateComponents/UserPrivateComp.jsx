@@ -7,7 +7,7 @@ const UserPrivateComp = () => {
 
   useEffect(() => {
     const userType = JSON.parse(localStorage.getItem("user"))?.type;
-    if (userType !== "user") {
+    if (userType === "user") {
       setIsValidUser(true);
     } else {
       setIsValidUser(false);

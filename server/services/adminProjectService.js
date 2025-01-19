@@ -107,6 +107,17 @@ class AdminProjectService {
       return { status: 500, message: error.message };
     }
   }
+
+  async getAllUserTaskCounts(companyId) {
+    try {
+      let AllUserTaskCounts = await adminProjectRepo.getAllUsers(companyId)
+      if (AllUserTaskCounts) {
+        return { status: 200, users: AllUserTaskCounts }
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
 }
 
 export default new AdminProjectService();

@@ -1,12 +1,20 @@
-import { memo, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
 import userTaskImage from "../../../assets/userTask.jpg";
 import userWorkImage from "../../../assets/userWork.avif";
 import UseLogin from "../../../CustomHooks/AdminLoginHook";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 const AdministartorLogin = () => {
   // login hook
-  const { LoginInfo, LoginInfoWarning, InputHandle, OnFormHandle } = UseLogin();
+  // eslint-disable-next-line no-unused-vars
+  const { LoginInfo, LoginInfoWarning, InputHandle, OnFormHandle, data, error, loading } = UseLogin();
+  const Navigate = useNavigate()
+  useEffect(() => {
+    let user = JSON.parse(localStorage.getItem("user"))?.type
+    if (user === "admin") {
+      Navigate("/admin")
+    }
+  }, [])
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
@@ -29,9 +37,9 @@ const AdministartorLogin = () => {
                 type="email"
                 className="w-full border-b-2 border-gray-300 focus:border-blue-500 outline-none py-2"
                 placeholder="xyz@gmail.com"
-                value={LoginInfo.name}
+                value={LoginInfo.email}
                 onChange={InputHandle}
-                name="name"
+                name="email"
               />
               <p className="mt-1 text-sm font-semibold text-red-600">
                 {LoginInfoWarning?.nameWarning}
@@ -63,10 +71,10 @@ const AdministartorLogin = () => {
 
             <button
               type="button"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 h-12 flex items-center justify-center"
               onClick={OnFormHandle}
             >
-              Login
+              {loading ? <div className="w-8 h-8 rounded-full bg-transparent border-white border-b-2 border-l-2  animate-spin"></div> : "Login"}
             </button>
           </div>
         </div>

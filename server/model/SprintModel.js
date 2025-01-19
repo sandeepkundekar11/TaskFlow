@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const SprintSchema = Schema({
+const SprintSchema = new Schema({
   name: { type: String },
   startDate: { type: Date },
   endDate: { type: Date },

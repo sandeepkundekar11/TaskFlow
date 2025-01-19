@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const TaskSchema = Schema({
+const TaskSchema =new Schema({
   title: { type: String },
   author: { type: Schema.Types.ObjectId, ref: "user" },
   subTasks: [{ type: Schema.Types.ObjectId, ref: "subtask" }],

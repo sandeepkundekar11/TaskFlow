@@ -40,7 +40,7 @@ class AdminService {
       }
 
       let token = jwt.sign({ user: userExist }, process.env.JWT_SECRET);
-      let checkPassword = bcrypt.compare(info.password, userExist.password);
+      let checkPassword = await bcrypt.compare(info.password, userExist.password);
       if (!checkPassword) {
         return {
           status: 401,

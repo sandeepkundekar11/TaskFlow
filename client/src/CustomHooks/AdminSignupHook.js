@@ -1,6 +1,9 @@
+import { BASE_URL } from "@/constants";
 import { useState } from "react";
+import UseSignupPostApi from "./UseSignupPostApi";
 
 const UseSignup = () => {
+ 
     // signupInfo
     const [SignUpInfo, setSignUpInfo] = useState({
         name: "",
@@ -49,7 +52,8 @@ const UseSignup = () => {
         })
     }
 
-
+    // calling api
+    const { data, error, loading ,callApi } = UseSignupPostApi(`${BASE_URL}/admin/adminSignup`,SignUpInfo)
     // form handle
     const OnFormHandel = () => {
         let newSignupWaring = {
@@ -88,9 +92,10 @@ const UseSignup = () => {
         ) {
             // api call
             console.log(SignUpInfo)
+            callApi()
         }
     }
-    return { SignUpInfo, SignUpInfoWarning, passwordWarning, onPasswordChange, OnInputHandel, OnFormHandel };
+    return { SignUpInfo, SignUpInfoWarning, passwordWarning, onPasswordChange, OnInputHandel, OnFormHandel,data, error, loading };
 };
 
 export default UseSignup;

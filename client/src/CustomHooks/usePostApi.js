@@ -1,10 +1,11 @@
+import Toasters from "@/Components/Utilities/Toasters"
 import { useState } from "react"
 
 const usePostApi = (url) => {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-
+    const { SuccessToaster, ErrorToaster } = Toasters()
     const PostApi = async (info) => {
         setLoading(true)
         let token = JSON.parse(localStorage.getItem("Token"))
@@ -19,9 +20,11 @@ const usePostApi = (url) => {
         let responseBody = await response.json()
         if (response.status === 200) {
             setData(responseBody)
+            SuccessToaster("User Add Successfully")
         }
         else {
             setError(responseBody.message)
+            ErrorToaster(responseBody.message)
         }
 
         setLoading(false)

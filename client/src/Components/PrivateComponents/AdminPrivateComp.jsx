@@ -12,7 +12,9 @@ const AdminPrivateComp = () => {
     }
   }, []);
   return (
-    <>{isUserAdmin ? <Outlet /> : <Navigate to="/administrativeLogin" />}</>
+    <>{isUserAdmin ?
+      <Outlet />
+      : <Navigate to="/administrativeLogin" />}</>
   );
 };
 export default AdminPrivateComp;

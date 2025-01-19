@@ -6,7 +6,7 @@ const UserPrivateComp = () => {
   const [isValidUser, setIsValidUser] = useState(true);
 
   useEffect(() => {
-    const userType = JSON.parse(localStorage.getItem("user"))?.type;
+    const userType = JSON.parse(localStorage.getItem("user"))?.role;
     if (userType === "user") {
       setIsValidUser(true);
     } else {
@@ -14,8 +14,11 @@ const UserPrivateComp = () => {
     }
   }, []);
   return <>{isValidUser ? <>
-    <UserNavbar />
-    <Outlet /> </> :
+ 
+      <UserNavbar />
+      <Outlet />
+  </>
+    :
     <Navigate to="/userlogin" />}</>;
 };
 export default UserPrivateComp;

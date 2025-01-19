@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import useGetApi from "@/CustomHooks/useGetApi";
 import usePostApi from "@/CustomHooks/usePostApi";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { BASE_URL } from "@/constants";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -74,11 +76,11 @@ const AdminUsers = () => {
                       </TableCell>
                       <TableCell className="font-medium text-base">
                         <div className="flex">
-                          <img
-                            src=""
-                            alt="img"
-                            className="w-12 bg-slate-300 h-12 rounded-full"
-                          />
+                          <Avatar>
+                            <AvatarFallback>{ele?.name?.split(" ").length > 1 ?
+                              ele?.name?.split(" ")[0] + ele?.name?.split(" ")[0] :
+                              ele?.name[0] + ele?.name[1]}</AvatarFallback>
+                          </Avatar>
                           <div className="ml-2">
                             <p className="font-bold  text-gray-800">{ele?.name}</p>
                             <p className="font-medium text-gray-500">
@@ -91,8 +93,8 @@ const AdminUsers = () => {
                         {ele?.taskCount}
                       </TableCell>
                       <TableCell>
-                        <div className="w-20 h-8 rounded-md  px-2 py-1">
-                          {ele?.status === "pending" ? (
+                        <div className="w-auto h-8 rounded-md  ">
+                          {ele?.invitationStatus === "pending" ? (
                             <p className="bg-yellow-300 font-semibold text-yellow-950 w-full h-full flex justify-center items-center rounded-lg">
                               {ele?.invitationStatus}
                             </p>

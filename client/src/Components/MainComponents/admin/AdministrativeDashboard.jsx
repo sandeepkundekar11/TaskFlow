@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import AdminUsers from "@/Components/subComponents/AdminUsers";
 import ProjectOverView from "@/Components/subComponents/ProjectOverview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,6 +7,7 @@ import DashBoard from "../../subComponents/DashBoard";
 import AdminSettings from "./AdminSetting";
 
 const AdminiStrativeDashboard = () => {
+
   return (
     <div className="w-screen h-full p-4 overflow-x-hidden ">
       <h1 className="Heading text-4xl font-bold  text-black">Dashboard</h1>

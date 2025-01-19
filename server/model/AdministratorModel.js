@@ -8,6 +8,10 @@ const AdministratorSchema = new Schema({
     type: String,
     required: true,
   },
+  type:{
+    type:String,
+    default:"admin"
+  }
 });
 
 const AdministratorModel = model("administrator", AdministratorSchema);

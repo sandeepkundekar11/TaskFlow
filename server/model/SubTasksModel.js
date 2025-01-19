@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const SubTaskSchema = Schema({
+const SubTaskSchema =new Schema({
   title: {
     type: String,
   },

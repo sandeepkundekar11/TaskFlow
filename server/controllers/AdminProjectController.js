@@ -65,7 +65,23 @@ class AdminProjectController {
           .status(response.status)
           .json({ message: response.message, users: response.users });
       }
-    } catch (error) {}
+    } catch (error) {
+      return res.status(500).json({ message: error.message })
+    }
+  }
+
+  // get all users with their Task Counts
+
+  async getAllUsersWithTaskCountController(req, res) {
+    try {
+      let companyId = req.userId;
+      let response = await adminProjectService.getAllUserTaskCounts(companyId)
+      if (response) {
+        return res.status(response.status).json({ users: response.users, message: response.message })
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message })
+    }
   }
 }
 

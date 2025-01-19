@@ -1,9 +1,11 @@
+import { BASE_URL } from "@/constants";
 import { useState } from "react";
+import UseSignupPostApi from "./UseSignupPostApi";
 
 const UseLogin = () => {
   // login info
   const [LoginInfo, setLoginInfo] = useState({
-    name: "",
+    email: "",
     password: "",
   });
 
@@ -22,6 +24,8 @@ const UseLogin = () => {
     });
   };
 
+    // calling api
+    const { data, error, loading ,callApi } = UseSignupPostApi(`${BASE_URL}/admin/adminlogin`,LoginInfo)
   // form handle
   const OnFormHandle = () => {
     const newWarnings = {
@@ -29,14 +33,14 @@ const UseLogin = () => {
       passwordWarning: "",
     };
 
-    if (LoginInfo.name.length < 6) {
-      newWarnings.nameWarning = "Name can't be less then 5 characters";
+    if (LoginInfo.email.length < 6) {
+      newWarnings.nameWarning = "email can't be less then 5 characters";
     } else {
       newWarnings.nameWarning = "";
     }
 
-    if (LoginInfo.password.length < 9) {
-      newWarnings.passwordWarning = "Password can't be less then 8 characters";
+    if (LoginInfo.password.length < 7) {
+      newWarnings.passwordWarning = "Password can't be less then 7 characters";
     } else {
       newWarnings.passwordWarning = "";
     }
@@ -46,9 +50,10 @@ const UseLogin = () => {
     // form submission
     if (newWarnings.nameWarning === "" && newWarnings.passwordWarning === "") {
       // api call
+      callApi()
     }
   };
 
-  return { LoginInfo, LoginInfoWarning, InputHandle, OnFormHandle };
+  return { LoginInfo, LoginInfoWarning, InputHandle, OnFormHandle ,data, error, loading};
 };
 export default UseLogin;

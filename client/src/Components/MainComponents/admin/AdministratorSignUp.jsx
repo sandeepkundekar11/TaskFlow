@@ -1,7 +1,8 @@
-import { memo, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { memo, useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import userTaskImage from "../../../assets/userTask.jpg";
 import userWorkImage from "../../../assets/userWork.avif";
 import UseSignup from "../../../CustomHooks/AdminSignupHook";
@@ -14,7 +15,19 @@ const AddMinistratorSignup = () => {
     onPasswordChange,
     OnInputHandel,
     OnFormHandel,
+    data,
+    error,
+    loading
   } = UseSignup();
+
+
+  const Navigate = useNavigate()
+  useEffect(() => {
+    let user = JSON.parse(localStorage.getItem("user"))?.type
+    if (user === "admin") {
+      Navigate("/admin")
+    }
+  }, [])
 
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -141,10 +154,12 @@ const AddMinistratorSignup = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 flex justify-center items-center h-11"
               onClick={OnFormHandel}
             >
-              Sign Up
+              {
+                loading ? <div className="w-8 h-8 rounded-full bg-transparent border-white border-b-2 border-l-2 animate-spin"></div> : "Signup"
+              }
             </button>
           </div>
         </div>

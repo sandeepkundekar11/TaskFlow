@@ -1,6 +1,6 @@
-import { Model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
-const ActivitySchema = Schema({
+const ActivitySchema =new Schema({
   name: {
     type: Types.ObjectId,
     ref: "user",
@@ -21,5 +21,5 @@ const ActivitySchema = Schema({
   },
 });
 
-const ActivityModel = Model("activity", ActivitySchema);
+const ActivityModel = model("activity", ActivitySchema);
 export default ActivityModel;

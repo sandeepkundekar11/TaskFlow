@@ -88,7 +88,7 @@ const MailSender = async ({
                   <p>Hi <strong>${receiverName}</strong>,</p>
                   <p>Welcome to <strong>TaskFlow</strong>! You’ve been added as a user by <strong>${senderName}</strong> for the company.</p>
                   <p>TaskFlow helps you collaborate on projects, manage tasks, and stay organized.</p>
-                  <p><a href="#" class="btn">Set Up Your Account</a></p>
+                  <p><a href=${process.env.BASE_USER_LOGIN_URL} class="btn">Set Up Your Account</a></p>
                   <p>Best regards,</p>
                   <p><strong>The TaskFlow Team</strong></p>
               </div>
@@ -103,9 +103,6 @@ const MailSender = async ({
 
     // Send email
     const info = await transporter.sendMail(emailContent);
-
-    // Log success message
-    console.log("Email sent:", info.messageId);
     return info;
   } catch (error) {
     console.error("Error sending email:", error.message);

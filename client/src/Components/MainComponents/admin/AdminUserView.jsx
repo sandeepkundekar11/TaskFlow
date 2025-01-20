@@ -1,27 +1,27 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 
@@ -79,11 +79,11 @@ const AdminUserView = () => {
         {/* header end */}
 
         {/* body section */}
-        <Card className="w-full h-auto p-2 mt-8">
+        <Card className="w-full h-[65vh] p-2 mt-8">
           <CardHeader>
             <CardTitle className="font-semibold text-2xl ">User Logs</CardTitle>
           </CardHeader>
-          <CardContent className="h-[60vh] overflow-x-scroll logcontainer">
+          <CardContent className="h-[45vh] overflow-x-scroll logcontainer ">
             <Table>
               <TableCaption>A list of All activity</TableCaption>
               <TableHeader>
@@ -97,7 +97,7 @@ const AdminUserView = () => {
               <TableBody>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((ele) => {
                   return (
-                    <TableRow key={ele} className="h-12">
+                    <TableRow key={ele} className="h-12 my-3 border bg-white">
                       <TableCell className="font-medium">{ele}</TableCell>
                       <TableCell className="font-medium">
                         2025-01-05T08:37:45.535Z

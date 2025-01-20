@@ -70,17 +70,34 @@ class AdminProjectRepo {
     }
   }
 
-
   //get all users
 
   async getAllUsers(companyId) {
     try {
-      return await UserModel.find({ company: companyId },"name email invitationStatus taskCount").populate("taskCount");
+      return await UserModel.find(
+        { company: companyId },
+        "name email invitationStatus taskCount"
+      ).populate("taskCount");
     } catch (error) {
-      console.log("error occured while getting all users")
+      console.log("error occured while getting all users");
     }
   }
 
+  //
+  async getAllProjects(companyId) {
+    try {
+      return await ProjectModel.find(
+        { company: companyId },
+        "name users tasks status"
+      ).populate({
+        path: "users",
+        model: "user",
+        select: "name",
+      });
+    } catch (error) {
+      console.log("error occured while getting all the projects");
+    }
+  }
 }
 
 export default new AdminProjectRepo();

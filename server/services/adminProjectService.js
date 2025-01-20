@@ -108,11 +108,24 @@ class AdminProjectService {
     }
   }
 
+  // gets all users with their Task Count
   async getAllUserTaskCounts(companyId) {
     try {
-      let AllUserTaskCounts = await adminProjectRepo.getAllUsers(companyId)
+      let AllUserTaskCounts = await adminProjectRepo.getAllUsers(companyId);
       if (AllUserTaskCounts) {
-        return { status: 200, users: AllUserTaskCounts }
+        return { status: 200, users: AllUserTaskCounts };
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+  //get all projects of that Company
+  async getAllProjectService(companyId) {
+    try {
+      let AllProjects = await adminProjectRepo.getAllProjects(companyId);
+      if (AllProjects) {
+        return { status: 200, projects: AllProjects };
       }
     } catch (error) {
       return { status: 500, message: error.message };

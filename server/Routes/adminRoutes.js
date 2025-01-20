@@ -34,8 +34,18 @@ adminRouter.get(
   AdminProjectController.getAllCompanyUsers
 );
 
-
 // get all users with their Task Counts
 
-adminRouter.get("/getUserWithTaskCount", userAuth, AdminProjectController.getAllUsersWithTaskCountController)
+adminRouter.get(
+  "/getUserWithTaskCount",
+  userAuth,
+  AdminProjectController.getAllUsersWithTaskCountController
+);
+
+// get all Projects of Company
+adminRouter.get(
+  "/getProjects",
+  userAuth,
+  AdminProjectController.getAllProjects
+);
 export default adminRouter;

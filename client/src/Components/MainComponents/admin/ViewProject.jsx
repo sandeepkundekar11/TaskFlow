@@ -44,7 +44,10 @@ const ViewProject = () => {
             <div className="flex  space-x-6 mt-3 ">
               <div className="flex space-x-2">
                 <p className=" font-semibold text-gray-700">Status :</p>
-                <p className="text-gray-500 "> Active</p>
+                <p className="px-2 rounded-xl bg-green-300 text-green-900">
+                  {" "}
+                  Active
+                </p>
               </div>
 
               <div className="flex space-x-2">
@@ -66,7 +69,7 @@ const ViewProject = () => {
         </Card>
 
         {/* activity logs */}
-        <Card className="w-full h-auto p-2 mt-8">
+        <Card className="w-full h-[70vh] p-2 mt-8">
           <CardHeader>
             <div className="flex justify-between">
               <CardTitle className="font-semibold text-2xl ">
@@ -106,7 +109,7 @@ const ViewProject = () => {
             </div>
           </CardHeader>
 
-          <CardContent className="h-[70vh] overflow-x-scroll logcontainer">
+          <CardContent className="h-[50vh] overflow-x-scroll border bg-slate-100 logcontainer">
             {[1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12].map((ele) => {
               return <AdminLog key={ele} />;
             })}

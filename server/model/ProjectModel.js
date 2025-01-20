@@ -7,6 +7,11 @@ const ProjectSchema = new Schema({
   endTime: { type: Date, default: Date.now },
   users: [{ type: Schema.Types.ObjectId, ref: "user" }],
   tasks: [{ type: Schema.Types.ObjectId, ref: "task" }],
+  status: {
+    type: String,
+    default: "in-active",
+    enum: ["active", "in-active"],
+  },
   company: { type: Schema.Types.ObjectId, ref: "administrator" },
 });
 

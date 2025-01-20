@@ -8,10 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProject from "../Popups/AddProject";
 import AvatarGroup from "./AvatarGroup";
+import useGetApi from "@/CustomHooks/useGetApi";
+import { BASE_URL } from "@/constants";
 
 const ProjectOverView = () => {
   const Navigate = useNavigate();
@@ -44,45 +46,29 @@ const ProjectOverView = () => {
     }
   };
 
-  const Projects = [
-    {
-      id: 1,
-      name: "Ems Project",
-      ActiveUsers: ["sandeep", "amir", "anil", "abhishek", "anurag"],
-      Task: 87,
-      status: "pending",
-    },
-    {
-      id: 2,
-      name: "Java Spring",
-      ActiveUsers: ["sandeep", "amir"],
-      Task: 11,
-      status: "active",
-    },
-    {
-      id: 3,
-      name: "Facebook Clone",
-      ActiveUsers: ["sandeep", "amir", "anil", "abhishek", "anurag", "sunil"],
-      Task: 50,
-      status: "pending",
-    },
-    {
-      id: 4,
-      name: "Ems Project",
-      ActiveUsers: [
-        "sandeep",
-        "amir",
-        "anil",
-        "abhishek",
-        "anurag",
-        "jone doe",
-        "harry",
-      ],
-      Task: 87,
-      status: "pending",
-    },
-  ];
+  // calling the get all project api
+  const [AllProjects, setAllProjects] = useState([]);
+  const {
+    data: AllTheProjects,
+    loading: AllProjectLoading,
+    callApi: GetAllProjects,
+  } = useGetApi(`${BASE_URL}/admin/getProjects`);
 
+  useEffect(() => {
+    GetAllProjects();
+  }, []);
+  useEffect(() => {
+    let updatedProject = AllTheProjects?.projects.map((project) => {
+      return {
+        name: project?.name,
+        ActiveUsers: project?.users?.map((user) => user?.name),
+        Task: project?.tasks?.length,
+        status: project?.status,
+        id: project?._id,
+      };
+    });
+    setAllProjects(updatedProject);
+  }, [AllTheProjects]);
   return (
     <div className="w-[85%]">
       <div className="table h-[60vh]  w-full overflow-x-scroll">
@@ -114,56 +100,60 @@ const ProjectOverView = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Projects.map((ele) => {
-              return (
-                <TableRow key={ele.id} className="hover:bg-slate-200">
-                  <TableCell>{ele.id}</TableCell>
-                  <TableCell className="font-medium text-base">
-                    {ele?.name}
-                  </TableCell>
-                  <TableCell className="font-medium text-base">
-                    <AvatarGroup users={ele?.ActiveUsers} />
-                  </TableCell>
-                  <TableCell className="font-medium text-base">
-                    {ele?.Task}
-                  </TableCell>
-                  <TableCell>
-                    <div className="w-20 h-8 rounded-md  px-2 py-1">
-                      {ele?.status === "pending" ? (
-                        <p className="bg-yellow-300 text-yellow-950 w-full h-full flex justify-center items-center rounded-lg">
-                          {ele?.status}
-                        </p>
-                      ) : (
-                        <p className="bg-green-400 text-green-900 flex justify-center items-center h-full w-full rounded-lg">
-                          {ele?.status}
-                        </p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500"
-                      onClick={() => {
-                        setTitle("updateProject");
-                      }}
-                    >
-                      Updated
-                    </Button>
-                  </TableCell>
-                  <TableCell className="flex justify-center">
-                    <Button
-                      variant="link"
-                      className=" w-32 text-blue-500"
-                      onClick={() => {
-                        Navigate(`${ele?.id}/view`);
-                      }}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {AllProjectLoading ? (
+              <p>Loading....</p>
+            ) : (
+              AllProjects?.map((ele, index) => {
+                return (
+                  <TableRow key={index} className="hover:bg-slate-200">
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-medium text-base">
+                      {ele?.name}
+                    </TableCell>
+                    <TableCell className="font-medium text-base">
+                      <AvatarGroup users={ele?.ActiveUsers} />
+                    </TableCell>
+                    <TableCell className="font-medium text-base">
+                      {ele?.Task}
+                    </TableCell>
+                    <TableCell>
+                      <div className="w-20 h-8 rounded-md  px-2 py-1">
+                        {ele?.status === "in-active" ? (
+                          <p className="bg-yellow-300 text-yellow-950 w-full h-full flex justify-center items-center rounded-lg">
+                            {ele?.status}
+                          </p>
+                        ) : (
+                          <p className="bg-green-400 text-green-900 flex justify-center items-center h-full w-full rounded-lg">
+                            {ele?.status}
+                          </p>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500"
+                        onClick={() => {
+                          setTitle("updateProject");
+                        }}
+                      >
+                        Updated
+                      </Button>
+                    </TableCell>
+                    <TableCell className="flex justify-center">
+                      <Button
+                        variant="link"
+                        className=" w-32 text-blue-500"
+                        onClick={() => {
+                          Navigate(`${ele?.id}/view`);
+                        }}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </div>

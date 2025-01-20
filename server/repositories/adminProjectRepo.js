@@ -66,7 +66,7 @@ class AdminProjectRepo {
     try {
       return await UserModel.find(
         {
-          $and: [{ company: companyId }, { invitationStatus: "completed" }],
+          $and: [{ company: companyId }, { invitationStatus: "available" }],
         },
         "name email"
       );

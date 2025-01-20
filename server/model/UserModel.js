@@ -7,7 +7,7 @@ const UserSchema = new Schema({
   invitationStatus: {
     type: String,
     default: "pending",
-    enum: ["pending", "completed"],
+    enum: ["pending", "available"],
   },
   role: { type: String, default: "user", enum: ["user", "admin"] },
   projects: [{ type: Schema.Types.ObjectId, ref: "project" }],

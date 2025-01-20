@@ -83,8 +83,8 @@ const AdminUsers = () => {
                     </TableCell>
                     <TableCell className="font-medium text-base">
                       <div className="flex">
-                        <Avatar className="border">
-                          <AvatarFallback>
+                        <Avatar className="border border-black">
+                          <AvatarFallback className="bg-blue-200">
                             {ele?.name?.split(" ").length > 1
                               ? ele?.name?.split(" ")[0] +
                                 ele?.name?.split(" ")[0]

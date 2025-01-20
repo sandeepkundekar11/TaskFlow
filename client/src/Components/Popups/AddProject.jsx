@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import { Button } from "../ui/button";
 
@@ -14,11 +13,13 @@ const AddProject = ({
   title,
   onCancel,
   onSave,
-  isToUpdate = false,
   loading = false,
   users = [],
+  updateData
 }) => {
-  const [selectedUsers, setSelectedUsers] = useState(null);
+
+
+  const [selectedUsers, setSelectedUsers] = useState(updateData&& updateData?.users);
   // project Data
   const [ProjectData, setProjectData] = useState({
     name: "",
@@ -26,6 +27,24 @@ const AddProject = ({
     startTime: "",
     endTime: "",
   });
+
+
+  useEffect(() => {
+    console.log(updateData)
+    if (updateData) {
+      setProjectData((prev) => ({
+        ...prev,
+        name: updateData.name,
+        description: updateData.description,
+        startTime: updateData.startTime?.split("T")[0],
+        endTime: updateData.endTime?.split("T")[0]
+      }));
+
+      console.log(updateData?.users)
+      setSelectedUsers(updateData?.users || []);
+    }
+  }, [updateData]);
+
 
   // warnings
   const [ProjectDataWarnings, setProjectDataWarnings] = useState({
@@ -70,21 +89,30 @@ const AddProject = ({
       newWarnings.descriptionWarnings = "";
     }
 
+    // let givenDate=Date.now(ProjectData.startTime)
+    // let presentDate=Date.now()
     // start  Date validation
     if (!ProjectData.startTime) {
-      newWarnings.startTimeWarnings = "Project start date has not mentioned";
+      newWarnings.startTimeWarnings = "Project start date has not been mentioned";
+    } else if (Date.now() > new Date(ProjectData.startTime).getTime()) {
+      newWarnings.startTimeWarnings = "Project start date can't be less than today's date";
     } else {
       newWarnings.startTimeWarnings = "";
     }
+
     //  end Date validation
-    if (!ProjectData.startTime) {
+    if (!ProjectData.endTime) {
       newWarnings.endTimeWarnings = "Project end date has not mentioned";
-    } else {
+    }
+    else if (new Date(ProjectData.startTime).getTime() > new Date(ProjectData.endTime).getTime()) {
+      newWarnings.endTimeWarnings = "Project end date can't be less then project start date";
+    }
+    else {
       newWarnings.endTimeWarnings = "";
     }
 
     setProjectDataWarnings(newWarnings);
-    //
+    // updating the users arr
     if (Object.values(newWarnings).every((val) => val === "")) {
       let updateUser = selectedUsers?.map((user) => {
         return user?.value;
@@ -164,17 +192,6 @@ const AddProject = ({
               </p>
             </div>
           </div>
-          {isToUpdate && (
-            <div className="flex items-center space-x-2 mt-3">
-              <Checkbox id="terms" className="w-5 h-5 " />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Toggle To Complete The Project
-              </label>
-            </div>
-          )}
 
           {/*  */}
           <div className="grid w-full  items-center gap-1.5 mt-4">

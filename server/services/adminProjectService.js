@@ -70,6 +70,11 @@ class AdminProjectService {
       if (!projectExist) {
         return { status: 404, message: "Project Not found" };
       }
+
+      // updating the users
+      projectExist.users.forEach((user)=>{
+        
+      })
       // finding the userids based on users email
       let userIds;
       if (users) {

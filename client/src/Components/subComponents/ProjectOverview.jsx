@@ -8,20 +8,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { BASE_URL } from "@/constants";
+import useGetApi from "@/CustomHooks/useGetApi";
+import usePutApi from "@/CustomHooks/usePutApi";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProject from "../Popups/AddProject";
 import AvatarGroup from "./AvatarGroup";
-import useGetApi from "@/CustomHooks/useGetApi";
-import { BASE_URL } from "@/constants";
-import usePutApi from "@/CustomHooks/usePutApi";
 
 const ProjectOverView = () => {
   const Navigate = useNavigate();
   const [Title, setTitle] = useState("");
   // calling the get all project api
   const [AllProjects, setAllProjects] = useState([]);
-
+  const [projectToUpdate, setProjectToUpdate] = useState(null)
   // calling get api
   const {
     data: AllTheProjects,
@@ -41,13 +41,18 @@ const ProjectOverView = () => {
     callApi: AddNewProject,
   } = usePutApi(`${BASE_URL}/admin/createProject`);
 
+
+  const [ProjectSelectedId, setProjectSelectedId] = useState(null)
+  // calling the Update api
+  const { data: updateProject, loading: updateProjectLoading, callApi:updatePresentProject } = usePutApi(`${BASE_URL}/admin/updateProject/${ProjectSelectedId}`)
+
   useEffect(() => {
     GetAllProjects();
     GetAllUser();
     setTitle(""); // removes the popup
-  }, [AddProjectInfo]);
+  }, [AddProjectInfo,updateProject]);
 
-  // upading the Users
+  // updating the Users
   const UserToAdd = useMemo(() => {
     if (AllUsers?.users) {
       let UpdateUser = AllUsers?.users?.map((userObj) => {
@@ -62,6 +67,10 @@ const ProjectOverView = () => {
     let updatedProject = AllTheProjects?.projects.map((project) => {
       return {
         name: project?.name,
+        startTime: project?.startTime,
+        endTime: project?.endTime,
+        description: project?.description,
+        userEmails: project?.users?.map((user) => user?.email),
         ActiveUsers: project?.users?.map((user) => user?.name),
         Task: project?.tasks?.length,
         status: project?.status,
@@ -89,8 +98,11 @@ const ProjectOverView = () => {
       comp: (
         <AddProject
           title="Updated The Project"
+          users={UserToAdd}
           onCancel={() => setTitle("")}
-          isToUpdate={true}
+          updateData={projectToUpdate}
+          onSave={(data) => updatePresentProject(data)}
+          loading={updateProjectLoading}
         />
       ),
     },
@@ -170,6 +182,21 @@ const ProjectOverView = () => {
                         className="mt-3 w-24 h-8 rounded-sm shadow-md bg-blue-400 hover:bg-blue-500"
                         onClick={() => {
                           setTitle("updateProject");
+                          let dataToUpdate = {
+                            name: ele?.name,
+                            description: ele?.description,
+                            startTime: ele?.startTime,
+                            endTime: ele?.endTime,
+                            users: ele?.userEmails?.map((user) => {
+                              return {
+                                value: user,
+                                label: user
+                              }
+                            })
+                          }
+                          setProjectToUpdate(dataToUpdate)
+                          // setting the update Id
+                          setProjectSelectedId(ele?.id)
                         }}
                       >
                         Updated

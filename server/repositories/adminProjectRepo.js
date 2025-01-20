@@ -39,7 +39,7 @@ class AdminProjectRepo {
       if (info?.endTime) updateData.endTime = info.endTime;
 
       // Add users to the update object if provided
-      if (Array.isArray(users) && users.length > 0) {
+      if (Array.isArray(users) ) {
         updateData.users = users;
       }
       console.log(updateData);
@@ -92,12 +92,11 @@ class AdminProjectRepo {
   async getAllProjects(companyId) {
     try {
       return await ProjectModel.find(
-        { company: companyId },
-        "name users tasks status"
+        { company: companyId }
       ).populate({
         path: "users",
         model: "user",
-        select: "name",
+        select: "name email",
       });
     } catch (error) {
       console.log("error occured while getting all the projects");

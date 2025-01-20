@@ -60,7 +60,7 @@ class UserRepo {
         { email: email },
         {
           $set: {
-            invitationStatus: "completed",
+            invitationStatus: "available",
           },
         }
       );

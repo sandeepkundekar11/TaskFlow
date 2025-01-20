@@ -16,10 +16,10 @@ class AdminProjectService {
       }
 
       // finding the userids based on users email
-      let userIds;
+      let userIds = [];
       if (users) {
         userIds = await Promise.all(
-          users.map((email) => {
+          users?.map((email) => {
             return UserModel.findOne({ email });
           })
         );
@@ -37,17 +37,20 @@ class AdminProjectService {
       });
 
       if (project) {
-        let projectId = project._id;
-        await Promise.all(
-          users.map((email) => {
-            return UserModel.updateOne(
-              { email: email },
-              {
-                $addToSet: { projects: projectId },
-              }
-            );
-          })
-        );
+        if (users) {
+          let projectId = project._id;
+          await Promise.all(
+            users?.map((email) => {
+              return UserModel.updateOne(
+                { email: email },
+                {
+                  $addToSet: { projects: projectId },
+                }
+              );
+            })
+          );
+        }
+
         return { status: 200, message: "Project is added successfully" };
       }
     } catch (error) {

@@ -64,7 +64,12 @@ class AdminProjectRepo {
   // get company users
   async getCompanyUsers(companyId) {
     try {
-      return await UserModel.find({ company: companyId }, "name email");
+      return await UserModel.find(
+        {
+          $and: [{ company: companyId }, { invitationStatus: "completed" }],
+        },
+        "name email"
+      );
     } catch (error) {
       console.log("Error occurred while getting the users", error.message);
     }

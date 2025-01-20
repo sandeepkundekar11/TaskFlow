@@ -8,21 +8,80 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProject from "../Popups/AddProject";
 import AvatarGroup from "./AvatarGroup";
 import useGetApi from "@/CustomHooks/useGetApi";
 import { BASE_URL } from "@/constants";
+import usePutApi from "@/CustomHooks/usePutApi";
 
 const ProjectOverView = () => {
   const Navigate = useNavigate();
   const [Title, setTitle] = useState("");
+  // calling the get all project api
+  const [AllProjects, setAllProjects] = useState([]);
+
+  // calling get api
+  const {
+    data: AllTheProjects,
+    loading: AllProjectLoading,
+    callApi: GetAllProjects,
+  } = useGetApi(`${BASE_URL}/admin/getProjects`);
+
+  // calling get All userApi
+  const { data: AllUsers, callApi: GetAllUser } = useGetApi(
+    `${BASE_URL}/admin/getuser`
+  );
+
+  // calling Add Project Api
+  const {
+    data: AddProjectInfo,
+    loading: AddProjectLoading,
+    callApi: AddNewProject,
+  } = usePutApi(`${BASE_URL}/admin/createProject`);
+
+  useEffect(() => {
+    GetAllProjects();
+    GetAllUser();
+    setTitle(""); // removes the popup
+  }, [AddProjectInfo]);
+
+  // upading the Users
+  const UserToAdd = useMemo(() => {
+    if (AllUsers?.users) {
+      let UpdateUser = AllUsers?.users?.map((userObj) => {
+        return { value: userObj?.email, label: userObj?.email };
+      });
+      return UpdateUser;
+    }
+  }, [AllUsers]);
+
+  // Updating the Projects
+  useEffect(() => {
+    let updatedProject = AllTheProjects?.projects.map((project) => {
+      return {
+        name: project?.name,
+        ActiveUsers: project?.users?.map((user) => user?.name),
+        Task: project?.tasks?.length,
+        status: project?.status,
+        id: project?._id,
+      };
+    });
+    setAllProjects(updatedProject);
+  }, [AllTheProjects]);
+
   const ComponentArr = [
     {
       title: "addProject",
       comp: (
-        <AddProject title="Add New Project" onCancel={() => setTitle("")} />
+        <AddProject
+          title="Add New Project"
+          users={UserToAdd}
+          onSave={(info) => AddNewProject(info)}
+          onCancel={() => setTitle("")}
+          loading={AddProjectLoading}
+        />
       ),
     },
     {
@@ -46,29 +105,6 @@ const ProjectOverView = () => {
     }
   };
 
-  // calling the get all project api
-  const [AllProjects, setAllProjects] = useState([]);
-  const {
-    data: AllTheProjects,
-    loading: AllProjectLoading,
-    callApi: GetAllProjects,
-  } = useGetApi(`${BASE_URL}/admin/getProjects`);
-
-  useEffect(() => {
-    GetAllProjects();
-  }, []);
-  useEffect(() => {
-    let updatedProject = AllTheProjects?.projects.map((project) => {
-      return {
-        name: project?.name,
-        ActiveUsers: project?.users?.map((user) => user?.name),
-        Task: project?.tasks?.length,
-        status: project?.status,
-        id: project?._id,
-      };
-    });
-    setAllProjects(updatedProject);
-  }, [AllTheProjects]);
   return (
     <div className="w-[85%]">
       <div className="table h-[60vh]  w-full overflow-x-scroll">

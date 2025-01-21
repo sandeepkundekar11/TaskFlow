@@ -5,11 +5,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { memo } from "react";
 import DashBoard from "../../subComponents/DashBoard";
 import AdminSettings from "./AdminSetting";
+import { Button } from "@/Components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const AdminiStrativeDashboard = () => {
+  const Navigate = useNavigate();
   return (
     <div className="w-screen h-full p-4 overflow-x-hidden ">
-      <h1 className="Heading text-4xl font-bold  text-black">Dashboard</h1>
+      <div className="flex justify-between">
+        <h1 className="Heading text-4xl font-bold  text-black">Dashboard</h1>
+        <Button
+          onClick={() => {
+            localStorage.removeItem("user");
+            localStorage.removeItem("Token");
+            Navigate("/administrativeLogin");
+          }}
+        >
+          SignOut
+        </Button>
+      </div>
       {/* small tabs */}
 
       <Tabs defaultValue={"Overview"} className="w-[800px]  mt-5">

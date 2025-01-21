@@ -12,6 +12,10 @@ const ProjectSchema = new Schema({
     default: "in-active",
     enum: ["active", "in-active"],
   },
+  ActivityCount: {
+    type: Number,
+    default: 0,
+  },
   company: { type: Schema.Types.ObjectId, ref: "administrator" },
 });
 

@@ -8,47 +8,36 @@ import {
   CardHeader,
 } from "@/Components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { BASE_URL } from "@/constants";
+import useGetApi from "@/CustomHooks/useGetApi";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserHome = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [activity, setActivity] = useState([]);
-  const projects = [
-    {
-      id: 1,
-      projectName: "TaskFlow",
-      description:
-        "A task management tool to streamline project workflows and team collaboration.",
-      users: ["Alice Johnson", "Bob Smith", "Charlie Brown"],
-    },
-    {
-      id: 2,
-      projectName: "QuizMaster",
-      description: "An advanced quiz application for educational institutions.",
-      users: ["Diana Prince", "Ethan Hunt", "Fiona Gallagher"],
-    },
-    {
-      id: 3,
-      projectName: "HealthTrack",
-      description:
-        "A health monitoring app for tracking fitness and medical reports.",
-      users: ["Grace Hopper", "Hank Pym", "Ivy Carter"],
-    },
-    {
-      id: 4,
-      projectName: "ShopEase",
-      description: "An e-commerce platform for seamless shopping experiences.",
-      users: ["Jack Sparrow", "Kate Winslet", "Leonardo DiCaprio"],
-    },
-    {
-      id: 5,
-      projectName: "EduConnect",
-      description:
-        "A platform to connect students with teachers for online learning.",
-      users: ["Mia Wallace", "Noah Webster", "Olivia Benson"],
-    },
-  ];
+  const [userAllProject, setUserAllProjects] = useState([]);
+  // calling the get all project Api
+  const {
+    data: allProjects,
+    loading: allProjectLoading,
+    callApi: getAllProjects,
+  } = useGetApi(`${BASE_URL}/user/projects`);
+
+  useEffect(() => {
+    getAllProjects();
+  }, []);
+
+  useEffect(() => {
+    let updatedProjects = allProjects?.projects?.map((project) => {
+      return {
+        ...project,
+        id: project?._id,
+        users: project?.users?.map((user) => user?.name),
+      };
+    });
+    setUserAllProjects(updatedProjects);
+  }, [allProjects]);
 
   const activitis = [
     {
@@ -136,9 +125,20 @@ const UserHome = () => {
           <CardContent className="">
             <ScrollArea className="h-[500px] w-full rounded-md  p-4 border">
               {/* mapping the Projects */}
-              {projects.map((project, index) => {
-                return <ProjectCard key={index} info={project} onView={() => navigate(`${project.id}/project`)} />;
-              })}
+
+              {allProjectLoading ? (
+                <div>Loading....</div>
+              ) : (
+                userAllProject?.map((project, index) => {
+                  return (
+                    <ProjectCard
+                      key={index}
+                      info={project}
+                      onView={() => navigate(`${project.id}/project`)}
+                    />
+                  );
+                })
+              )}
             </ScrollArea>
           </CardContent>
         </Card>

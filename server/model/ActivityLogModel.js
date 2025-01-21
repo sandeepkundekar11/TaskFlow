@@ -1,19 +1,19 @@
 import { model, Schema, Types } from "mongoose";
 
-const ActivitySchema =new Schema({
+const ActivitySchema = new Schema({
   name: {
     type: Types.ObjectId,
     ref: "user",
   },
   action: {
     type: String,
-    enum: ["Create", "Update"],
+    enum: ["Created", "Updated", "Deleted"],
   },
   task: {
     type: String,
   },
   TaskId: {
-    type: String,
+    type: String, //"EM-12"
   },
   timeStamp: {
     type: Date,

@@ -21,7 +21,11 @@ class AdminProjectRepo {
   // check the project available or not
   async isProjectAvailable(projectId) {
     try {
-      return await ProjectModel.findOne({ _id: projectId });
+      return await ProjectModel.findOne({ _id: projectId }).populate({
+        path: "users",
+        model: "user",
+        select: "name email",
+      });
     } catch (error) {
       console.log("Error occurred while checking the project");
     }
@@ -39,7 +43,7 @@ class AdminProjectRepo {
       if (info?.endTime) updateData.endTime = info.endTime;
 
       // Add users to the update object if provided
-      if (Array.isArray(users) ) {
+      if (Array.isArray(users)) {
         updateData.users = users;
       }
       console.log(updateData);
@@ -91,9 +95,7 @@ class AdminProjectRepo {
   //
   async getAllProjects(companyId) {
     try {
-      return await ProjectModel.find(
-        { company: companyId }
-      ).populate({
+      return await ProjectModel.find({ company: companyId }).populate({
         path: "users",
         model: "user",
         select: "name email",

@@ -6,6 +6,10 @@ const SprintSchema = new Schema({
   endDate: { type: Date },
   project: { type: Schema.Types.ObjectId, ref: "project" },
   Tasks: [{ type: Schema.Types.ObjectId, ref: "task" }],
+  isCompleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const SprintModel = model("sprint", SprintSchema);

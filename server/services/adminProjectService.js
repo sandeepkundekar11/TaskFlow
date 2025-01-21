@@ -1,5 +1,6 @@
 import UserModel from "../model/UserModel.js";
 import adminProjectRepo from "../repositories/adminProjectRepo.js";
+import areArraysEqualIgnoreOrder from "../Utility/ArraysOprations.js";
 
 class AdminProjectService {
   async addNewproject(projectInfo) {
@@ -71,17 +72,37 @@ class AdminProjectService {
         return { status: 404, message: "Project Not found" };
       }
 
-      // updating the users
-      projectExist.users.forEach((user)=>{
-        
-      })
+      // if new users found then remove previous users and update new users
+
+      await UserModel.updateMany(
+        { _id: { $in: projectExist.users.map((user) => user._id) } },
+        {
+          $pull: {
+            projects: projectId,
+          },
+        }
+      );
+
       // finding the userids based on users email
-      let userIds;
-      if (users) {
-        userIds = await Promise.all(
-          users.map((email) => {
-            return UserModel.findOne({ email });
-          })
+      // Find user IDs based on provided emails
+      const userRecords = await Promise.all(
+        users.map((email) => UserModel.findOne({ email }))
+      );
+      const userIds = userRecords
+        .filter((user) => user) // Exclude null/undefined
+        .map((user) => user._id);
+
+      // upading the users
+      if (users && users.length > 0) {
+        await UserModel.updateMany(
+          {
+            _id: { $in: userIds.map((id) => id) },
+          },
+          {
+            $push: {
+              projects: projectId,
+            },
+          }
         );
       }
 

@@ -84,5 +84,32 @@ class UserProjectService {
       return { status: 500, message: error.message };
     }
   }
+
+  // get all project backlog data
+  async getAllBacklogData(projectId, isStarted = false, isCompleted = false) {
+    try {
+      // checks that is project available or not
+      let projectExist = await ProjectModel.findOne({ _id: projectId });
+      if (!projectExist) {
+        return { status: 404, message: "project not found" };
+      }
+      // getting the project info
+      let projectInfo = await UserProjectRepo.getProjectBacklogs(projectId);
+      let sprint = await UserProjectRepo.getSprint(
+        projectId,
+        isStarted,
+        isCompleted
+      );
+      if (projectInfo && sprint) {
+        return {
+          status: 200,
+          backlogs: projectInfo,
+          sprint: sprint,
+        };
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
 }
 export default new UserProjectService();

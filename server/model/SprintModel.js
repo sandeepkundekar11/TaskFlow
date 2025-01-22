@@ -10,6 +10,10 @@ const SprintSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isStarted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const SprintModel = model("sprint", SprintSchema);

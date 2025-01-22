@@ -8,7 +8,8 @@ class UserProjectController {
   async createNewTaskController(req, res) {
     try {
       let author = req.userId;
-      let { title, projectId } = req.body;
+      let { title } = req.body;
+      let { projectId } = req.params;
       if (!title || !projectId) {
         return res.status(404).json({ message: "Please provide the Title" });
       }
@@ -131,6 +132,18 @@ class UserProjectController {
         return res.status(404).json({ message: "Enter all detals" });
       }
 
+      // check sprint is already running or not if it running then no need to create new sprint
+      let activeSprintPresent = await SprintModel.find({
+        $and: [
+          { project: projectId },
+          { isCompleted: false }, // sprint has not completed
+          { isStarted: true }, // sprint has started
+        ],
+      });
+
+      if (activeSprintPresent) {
+        return res.status(409).json({ message: "sprint is already running" });
+      }
       let newSprint = await UserProjectService.createNewSprint({
         name,
         projectId,
@@ -159,7 +172,7 @@ class UserProjectController {
     const { startDate, endDate, Tasks = [] } = req.body;
     const author = req.userId;
     const { projectId, sprintId } = req.params;
-    if (!startDate || !endDate || !Tasks || Tasks.length === 0) {
+    if (!startDate && !endDate && !Tasks && Tasks.length === 0) {
       return res.status(404).json({ message: "Provide all information" });
     }
     try {
@@ -185,6 +198,29 @@ class UserProjectController {
         return res
           .status(updateSprint?.status)
           .json({ message: updateSprint.message });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  // get project backlogs
+  async getProjectBacklogs(req, res) {
+    let { projectId } = req.params;
+    let { isCompleted, isStarted } = req.query;
+    try {
+      let projectBacklogs = await UserProjectService.getAllBacklogData(
+        projectId,
+        isStarted,
+        isCompleted
+      );
+
+      if (projectBacklogs) {
+        return res.status(projectBacklogs.status).json({
+          message: projectBacklogs.message,
+          backlogs: projectBacklogs.backlogs,
+          sprint: projectBacklogs.sprint,
+        });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

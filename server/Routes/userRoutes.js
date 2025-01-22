@@ -11,7 +11,7 @@ UserRouter.get("/projects", userAuth, userController.getUserProjects);
 
 // creating the new Tasks
 UserRouter.post(
-  "/createTask",
+  "/createTask/:projectId",
   userAuth,
   UserProjectController.createNewTaskController
 );
@@ -45,6 +45,14 @@ UserRouter.put(
   "/updateSprint/:projectId/:sprintId",
   userAuth,
   UserProjectController.updateSprint
+);
+
+// get project backlogs and sprints
+
+UserRouter.get(
+  "/getBacklogs/:projectId",
+  userAuth,
+  UserProjectController.getProjectBacklogs
 );
 
 export default UserRouter;

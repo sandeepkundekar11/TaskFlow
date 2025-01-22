@@ -7,7 +7,7 @@ class UserProjectService {
     const { author, title, projectId } = info;
     try {
       // creating the new Task
-      let newTask = await UserProjectRepo.createTask({ author, title });
+      let newTask = await UserProjectRepo.createTask({ author, title },projectId);
       //   lets update the Project
       let updateProject = await ProjectModel.updateOne(
         { _id: projectId },

@@ -46,7 +46,6 @@ class AdminProjectRepo {
       if (Array.isArray(users)) {
         updateData.users = users;
       }
-      console.log(updateData);
       // If no updates are specified, return an error message
       if (Object.keys(updateData).length === 0) {
         return { success: false, message: "No updates provided." };

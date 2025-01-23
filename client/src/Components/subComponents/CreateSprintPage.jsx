@@ -7,15 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/Components/ui/card";
+
+import useDeleteApi from "@/CustomHooks/useDeleteApi";
+import useGetApi from "@/CustomHooks/useGetApi";
 import usePostApi from "@/CustomHooks/usePostApi";
+import usePutApi from "@/CustomHooks/usePutApi";
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/constants";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Sprint from "./Sprint";
+import DeletePopup from "../Popups/DeletePopup";
 import Task from "./Task";
-import useGetApi from "@/CustomHooks/useGetApi";
-import usePutApi from "@/CustomHooks/usePutApi";
 const CreateSprint = () => {
   // this state is use to show  hide the add Task input filed
   const [ShowCreateTask, setShowCreateTask] = useState(false);
@@ -44,6 +46,17 @@ const CreateSprint = () => {
 
   // -------------------------------------------------------------------
   // delete Task api
+  const { callApi: DeleteTask, loading: DeleteTaskLoading, data: deleteMessage } = useDeleteApi()
+
+
+
+  // this state stores the id of task to be deleted
+  const [TaskIdToDelete, settaskIdToDelete] = useState(null)
+
+  // when Task gets deleted then remove the popup
+  useEffect(() => {
+    setShowDeletePopup(false)
+  }, [deleteMessage])
 
   const [BackLogsInfo, setBacklogsInfo] = useState();
   useEffect(() => {
@@ -90,10 +103,14 @@ const CreateSprint = () => {
     });
   };
 
-  // api call
+  // api call to  create Task
   const onSaveTask = (val) => {
     updateTask({ title: val });
   };
+
+
+  //show hide delete popup
+  const [ShowDeletePopup, setShowDeletePopup] = useState(false)
 
   useEffect(() => {
     // stores all the Backlogs data like sprint info, Tasks
@@ -102,38 +119,29 @@ const CreateSprint = () => {
 
   // creating new sprint
 
-  const [Sprints, setSprints] = useState([]);
+  // Create Sprint Api Call
+  const { callApi: CreateNewSprint } = usePostApi(`${BASE_URL}/user/createSprint/${projectId}`)
+  const [Sprint, setSprint] = useState({
+    _id: "67927db3471a9e17b6352d03",
+    name: "Sprint-1",
+    project: "6791cad7dc748987c0499f2f",
+    Tasks: [],
+    "isCompleted": false,
+    "isStarted": false,
+  });
 
   // creating new Sprint
-  const createSprint = () => {
-    setSprints((prev) => {
-      return [
+  const createTheSprint = () => {
+    CreateNewSprint({ "name": `Sprint-${BackLogsInfo?.sprint.length + 1}` })
+    setBacklogsInfo((prev) => {
+      return {
         ...prev,
-        {
-          name: `sprint -${Sprints.length + 1}`,
-          tasks: [],
-          startTime: "",
-          endTime: "",
-        },
-      ];
-    });
+        sprint: [...prev.sprint,]
+      }
+    })
   };
 
-  // updating each sprint
-  const onInputchange = (filed, newValue, index) => {
-    setSprints((NewSprint) => {
-      return NewSprint.map((val, sIndex) => {
-        if (index === sIndex) {
-          return {
-            ...val,
-            [filed]: newValue,
-          };
-        } else {
-          return val;
-        }
-      });
-    });
-  };
+
 
   return (
     <div className="w-full p-4">
@@ -164,7 +172,7 @@ const CreateSprint = () => {
 
           {/* create sprint button */}
           <div className="w-full flex justify-end mt-2">
-            <Button className="w-32" variant="outline" onClick={createSprint}>
+            <Button className="w-32" variant="outline" onClick={createTheSprint}>
               Create Sprint
             </Button>
           </div>
@@ -181,6 +189,7 @@ const CreateSprint = () => {
               {/* in this block all created Task will come */}
               <div className="space-y-2">
                 {BackLogsInfo?.backlogs?.tasks?.map((ele, index) => {
+                  // mapping all the tasks
                   return (
                     <Task
                       key={index}
@@ -188,7 +197,6 @@ const CreateSprint = () => {
                       user={ele?.author?.name}
                       OnEdit={() => {
                         setTaskIdToUpdate(ele?._id);
-                        // console.log(ele?._id);
                       }}
                       OnEditSave={(val) => onSaveTask(val)}
                       inputUpdate={(newVal) => onUpdatetask(newVal)}
@@ -196,6 +204,12 @@ const CreateSprint = () => {
                         ele?.author?._id ||
                         JSON.parse(localStorage.getItem("user"))._id
                       }
+                      onDelete={() => {
+
+                        // DeleteTaskfunc(ele._id)
+                        settaskIdToDelete(ele?._id)
+                        setShowDeletePopup(true)
+                      }}
                     />
                   );
                 })}
@@ -281,6 +295,32 @@ const CreateSprint = () => {
           </Card>
         </CardContent>
       </Card>
+
+      {/* popups */}
+      {
+        ShowDeletePopup &&
+        <DeletePopup
+          loading={DeleteTaskLoading}
+          OnDelete={() => {
+            // calling Delete Task api
+            DeleteTask(`${BASE_URL}/user/deleteTask/${projectId}/${TaskIdToDelete}`)
+            //  updating the backlogs
+            setBacklogsInfo((prev) => {
+              return {
+                ...prev,
+                backlogs: {
+                  ...prev?.backlogs,
+                  tasks: prev.backlogs?.tasks.filter((task) => {
+                    return task._id !== TaskIdToDelete
+                  })
+                }
+              }
+            })
+          }
+
+          }
+          onCancel={() => { setShowDeletePopup(false) }} />
+      }
     </div>
   );
 };

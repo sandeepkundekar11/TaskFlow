@@ -20,7 +20,7 @@ const usePutApi = (url) => {
     let responseBody = await response.json();
     if (response.status === 200) {
       setData(responseBody);
-      SuccessToaster("User Add Successfully");
+      SuccessToaster(responseBody.message);
     } else {
       setError(responseBody.message);
       ErrorToaster(responseBody.message);

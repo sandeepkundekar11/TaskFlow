@@ -28,7 +28,9 @@ class UserProjectController {
           task: title,
           createdTaskId: projectId,
         });
-        return res.status(newTask.status).json({ message: newTask.message });
+        return res
+          .status(newTask.status)
+          .json({ message: newTask.message, TaskId: newTask.taskId });
       }
     } catch (error) {
       return res.json({ message: error.message });

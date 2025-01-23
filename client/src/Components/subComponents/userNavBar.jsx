@@ -12,7 +12,16 @@ const UserNavbar = () => {
           <li className="font-bold" onClick={() => Navigate("/user")}>
             Home
           </li>
-          <li className="font-bold">SignOut</li>
+          <li
+            className="font-bold"
+            onClick={() => {
+              localStorage.removeItem("user");
+              localStorage.removeItem("Token");
+              Navigate("/userlogin");
+            }}
+          >
+            SignOut
+          </li>
           <li className="font-bold">Profile</li>
         </ul>
         <Avatar className="border-gray-600  shadow-2xl w-10 h-10 ">

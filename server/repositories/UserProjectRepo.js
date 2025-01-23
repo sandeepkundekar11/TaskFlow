@@ -7,14 +7,21 @@ class UserProjectRepo {
     const { author, title } = TaskInfo;
 
     // finding Project
-    let project = await ProjectModel.findOne({ _id: projectId }, "name")
-    let projectName = project.name.split(" ")
-    let codeName = projectName.length > 1 ? projectName[0][0] + projectName[1][0] : projectName[0][0] + projectName[0][1]
-    let Tasks = await ProjectModel.findOne({ _id: projectId }, "tasks")
-    let TaskCount = Tasks.tasks.length
+    let project = await ProjectModel.findOne({ _id: projectId }, "name");
+    let projectName = project.name.split(" ");
+    let codeName =
+      projectName.length > 1
+        ? projectName[0][0] + projectName[1][0]
+        : projectName[0][0] + projectName[0][1];
+    let Tasks = await ProjectModel.findOne({ _id: projectId }, "tasks");
+    let TaskCount = Tasks.tasks.length;
 
     try {
-      return await TaskModel.create({ author: author, title: title, taskCode: `${codeName}-${TaskCount + 1}` });
+      return await TaskModel.create({
+        author: author,
+        title: title,
+        taskCode: `${codeName}-${TaskCount + 1}`,
+      });
     } catch (error) {
       console.log("error occured while creating the new task");
     }
@@ -110,6 +117,11 @@ class UserProjectRepo {
         model: "task",
         select: "title author IsInSprint",
         match: { IsInSprint: false },
+        populate: {
+          path: "author",
+          model: "user",
+          select: "name",
+        },
       });
     } catch (error) {
       console.log("error while getting the project backlogs");

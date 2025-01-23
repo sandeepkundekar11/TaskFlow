@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import CustomAvator from "./CustomAvator";
 
-const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId }) => {
+const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId,onDelete }) => {
   const [isEdit, setIsEdit] = useState(false);
 
   // this is use to store the old data in case we cancel the editing then by using this we can restore
@@ -70,7 +70,7 @@ const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId }) => {
           </div>
           {JSON.parse(localStorage.getItem("user"))._id == TaskAuthorId && (
             <div className="col-span-1 flex justify-end pr-10 cursor-pointer space-x-8">
-              <Trash2 className="hover:text-red-600" />
+              <Trash2 className="hover:text-red-600"  onClick={onDelete}/>
               <Pencil
                 className="hover:text-blue-600"
                 onClick={() => {

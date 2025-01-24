@@ -5,7 +5,8 @@ import {
     CardHeader
 } from "@/Components/ui/card";
 import { Button } from "../ui/button";
-const Sprint = ({ SprintTasks = [], sprintName, sprint, OnInputChange }) => {
+import Task from "./Task";
+const Sprint = ({ SprintTasks = [], sprintName, sprint, OnInputChange ,onDrop,onDragOver}) => {
     return (
         <Card className="w-full min-h-24 bg-white">
             <CardHeader>
@@ -28,12 +29,12 @@ const Sprint = ({ SprintTasks = [], sprintName, sprint, OnInputChange }) => {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="bg-slate-50 flex justify-center items-center min-h-24 max-h-max border-dashed border-2">
+            <CardContent className="bg-slate-50 flex flex-col justify-center items-center min-h-24 max-h-max border-dashed border-2"onDrop={onDrop} onDragOver={onDragOver}>
                 {
                     // listing  down the draged task in the sprint
                     SprintTasks.map((task, tindex) => {
                         return (
-                            <div key={tindex} className="w-[90%] h-10">{task}</div>
+                             <Task key={tindex} val={task?.title} user={task?.author?.name}/>
                         )
                     })
                 }

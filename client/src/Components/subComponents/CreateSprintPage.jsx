@@ -17,9 +17,9 @@ import { BASE_URL } from "@/constants";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DeletePopup from "../Popups/DeletePopup";
-import Task from "./Task";
-import Sprint from "./Sprint";
 import SprintUtility from "../Utilities/SprintUtility";
+import Sprint from "./Sprint";
+import Task from "./Task";
 const CreateSprint = () => {
   const { SaveNewTask, UpdatedTask } = SprintUtility();
   // this state is use to show  hide the add Task input filed
@@ -154,6 +154,50 @@ const CreateSprint = () => {
     setBacklogsInfo(allBacklogs);
   }, [allBacklogs]);
 
+
+  // stores the data which is going to drag
+  const [DraggedData, setDraggedData] = useState(null);
+
+  // stores the Sprint Name in which we are adding the Tasks 
+  const [SprintNameToUpdated, setSprintNameToupdate] = useState("")
+  const OnDragStart = (data) => {
+    setDraggedData(data)
+  }
+
+  // 
+  const onDragOver = (e) => {
+    e.preventDefault()
+  }
+
+  // 
+
+  const onDrag = () => {
+    // when we drag the Task on Sprint then  update the BacklogsInfo
+    setBacklogsInfo((prev) => {
+      return {
+        ...prev,
+        backlogs: {
+          ...prev?.backlogs,
+          tasks: prev?.backlogs?.tasks.filter((task) => {
+            return task?._id !== DraggedData?._id
+          })
+        },
+        sprint: prev?.sprint?.map((sp) => {
+          if (sp.name === SprintNameToUpdated) {
+            return {
+              ...sp,
+              Tasks: [...sp?.Tasks, DraggedData]
+            }
+          }
+          else {
+            return sp
+          }
+        })
+      }
+    })
+
+  }
+
   // creating new sprint
 
   // Create Sprint Api Call
@@ -192,7 +236,14 @@ const CreateSprint = () => {
                 sprintName={sprint?.name}
                 key={index}
                 sprint={sprint}
-                // OnInputChange={(filed, newValue) => {}}
+                onDrop={onDrag}
+                onDragOver={(e) => {
+                  setSprintNameToupdate(sprint?.name)
+                  console.log(sprint?.name)
+                  onDragOver(e)
+                }}
+                SprintTasks={BackLogsInfo?.sprint?.find((val) => val?.name === sprint?.name)?.Tasks}
+              // OnInputChange={(filed, newValue) => {}}
               />
             );
           })}
@@ -240,6 +291,8 @@ const CreateSprint = () => {
                         settaskIdToDelete(ele?._id);
                         setShowDeletePopup(true);
                       }}
+
+                      onDragStart={() => OnDragStart(ele)}
                     />
                   );
                 })}

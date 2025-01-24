@@ -67,6 +67,7 @@ class UserProjectService {
         return {
           status: 200,
           message: "create Sprint has created successfully",
+          sprintId: createNewSprint.sprintId
         };
       }
     } catch (error) {

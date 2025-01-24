@@ -158,7 +158,7 @@ class UserProjectController {
         });
         return res
           .status(newSprint.status)
-          .json({ message: newSprint.message });
+          .json({ message: newSprint.message, sprintId: newSprint.sprintId });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

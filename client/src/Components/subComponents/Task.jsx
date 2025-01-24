@@ -12,6 +12,8 @@ const Task = ({
   OnEdit,
   TaskAuthorId,
   onDelete,
+  onDragStart,
+  onDragEnd
 }) => {
   const [isEdit, setIsEdit] = useState(false);
 
@@ -28,7 +30,10 @@ const Task = ({
   }, []);
   useEffect(() => {
     //update the input value
-    inputUpdate(InputVal);
+    if (inputUpdate) {
+      inputUpdate(InputVal);
+    }
+
   }, [InputVal]);
   return (
     <>
@@ -73,7 +78,7 @@ const Task = ({
           </div>
         </div>
       ) : (
-        <div className="w-full grid grid-cols-4 border rounded-md p-2  bg-slate-100 cursor-move ">
+        <div className="w-full grid grid-cols-4 border rounded-md p-2  bg-slate-100 cursor-move " draggable onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div className="col-span-3 flex h-full items-center pl-4">
             <CustomAvator user={user} />
             <div className="w-full flex items-center h-10">
@@ -98,6 +103,7 @@ const Task = ({
               />
             </div>
           )}
+
         </div>
       )}
     </>

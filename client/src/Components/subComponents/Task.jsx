@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import CustomAvator from "./CustomAvator";
 
-const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId,onDelete }) => {
+const Task = ({
+  val,
+  inputUpdate,
+  OnEditSave,
+  user,
+  OnEdit,
+  TaskAuthorId,
+  onDelete,
+}) => {
   const [isEdit, setIsEdit] = useState(false);
 
   // this is use to store the old data in case we cancel the editing then by using this we can restore
@@ -46,18 +54,22 @@ const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId,onDelet
                 setInputVal(oldData);
               }}
             />
-            <SaveAll
-              onClick={() => {
-                // on save is edit will be false
-                setIsEditCancel(false);
-                // hide the input filed
-                setIsEdit(false);
-                // sends the save Data to parent
-                OnEditSave(val);
-                // and set Old data to saved data
-                setOldData(val);
-              }}
-            />
+
+            {val !== oldData && (
+              <SaveAll
+                onClick={() => {
+                  // on save is edit will be false
+                  setIsEditCancel(false);
+                  // hide the input filed
+                  setIsEdit(false);
+                  // sends the save Data to parent
+
+                  val !== oldData && OnEditSave(val);
+                  // and set Old data to saved data
+                  setOldData(val);
+                }}
+              />
+            )}
           </div>
         </div>
       ) : (
@@ -70,7 +82,13 @@ const Task = ({ val, inputUpdate, OnEditSave, user, OnEdit, TaskAuthorId,onDelet
           </div>
           {JSON.parse(localStorage.getItem("user"))._id == TaskAuthorId && (
             <div className="col-span-1 flex justify-end pr-10 cursor-pointer space-x-8">
-              <Trash2 className="hover:text-red-600"  onClick={onDelete}/>
+              <Trash2
+                className="hover:text-red-600"
+                onClick={() => {
+                  onDelete();
+                }}
+              />
+
               <Pencil
                 className="hover:text-blue-600"
                 onClick={() => {

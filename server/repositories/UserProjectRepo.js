@@ -55,10 +55,14 @@ class UserProjectRepo {
   async creatNewSprint(info) {
     const { name, projectId } = info;
     try {
-      return await SprintModel.create({
+      let sprint= await SprintModel.create({
         name: name,
         project: projectId,
       });
+
+      return {
+        sprintId:sprint?._id
+      }
     } catch (error) {
       console.log("error  while creating new Sprint", error.message);
     }

@@ -137,10 +137,7 @@ class UserProjectController {
       // check sprint is already running or not if it running then no need to create new sprint
       let activeSprintPresent = await SprintModel.find({
         project: projectId,
-        $and: [
-          { isCompleted: false }, // sprint has not completed
-          { isStarted: true }, // sprint has started
-        ],
+        isCompleted: false,
       });
 
       if (activeSprintPresent.length > 0) {
@@ -161,7 +158,7 @@ class UserProjectController {
         });
         return res
           .status(newSprint.status)
-          .json({ message: newSprint.message, });
+          .json({ message: newSprint.message });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

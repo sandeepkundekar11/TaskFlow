@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const CustomAvator = ({ user }) => {
-  const nameParts = user.split(" ");
+  const nameParts = user?.split(" ");
   const initials =
-    nameParts.length >= 2
+    nameParts?.length >= 2
       ? nameParts[0][0] + nameParts[1][0]
       : user[0] + (user[1] || "");
   return (

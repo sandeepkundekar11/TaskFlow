@@ -87,7 +87,7 @@ const CreateSprint = () => {
     getAllInfo();
   }, []);
 
-  // setting the Created Task Id
+  // setting the new Task in the backlogs
   useEffect(() => {
     if (newTaskMessage?.TaskId) {
       let newTask = {
@@ -96,12 +96,12 @@ const CreateSprint = () => {
         author: TaskInputField.author,
         IsInSprint: TaskInputField?.IsInSprint,
       };
-      console.log(newTask, "newTask");
       setBacklogsInfo((prev) => SaveNewTask(prev, newTask));
       setTaskInputFiled({ _id: "", author: "", title: "" });
     }
   }, [newTaskMessage?.TaskId]);
 
+  // save Task
   const saveTask = useCallback(() => {
     if (TaskInputField.title.length > 6) {
       // save Task Api call
@@ -111,7 +111,6 @@ const CreateSprint = () => {
   }, [TaskInputField, CreateNewTask]);
 
   // update the task Input filed
-
   const UpdateTaskFiled = useCallback(
     (event) => {
       setTaskInputFiled((prev) => {
@@ -154,66 +153,128 @@ const CreateSprint = () => {
     setBacklogsInfo(allBacklogs);
   }, [allBacklogs]);
 
+  // spring Logic
+
+  const [SprintId, setSprintId] = useState(null);
+  // calling the update Sprint
+  const { callApi: UpdateSprint, data: SprintUpdateData } = usePutApi(
+    `${BASE_URL}/user/updateSprint/${projectId}/${SprintId}`
+  );
+  // remove Task Api
+  const { callApi: RemoveTaskFromSprint } = useDeleteApi();
 
   // stores the data which is going to drag
   const [DraggedData, setDraggedData] = useState(null);
 
-  // stores the Sprint Name in which we are adding the Tasks 
-  const [SprintNameToUpdated, setSprintNameToupdate] = useState("")
+  //
+
+  const [DraggedSprintTask, setDraggedSprintTask] = useState(null);
+  // stores the Sprint Name in which we are adding the Tasks
+  const [SprintNameToUpdated, setSprintNameToupdate] = useState("");
   const OnDragStart = (data) => {
-    setDraggedData(data)
-  }
+    setDraggedData(data);
+  };
 
-  // 
+  //on drad over on Sprint
   const onDragOver = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
-  // 
-
-  const onDrag = () => {
-    // when we drag the Task on Sprint then  update the BacklogsInfo
-    setBacklogsInfo((prev) => {
-      return {
-        ...prev,
-        backlogs: {
-          ...prev?.backlogs,
-          tasks: prev?.backlogs?.tasks.filter((task) => {
-            return task?._id !== DraggedData?._id
-          })
-        },
-        sprint: prev?.sprint?.map((sp) => {
-          if (sp.name === SprintNameToUpdated) {
-            return {
-              ...sp,
-              Tasks: [...sp?.Tasks, DraggedData]
+  //
+  const onDropOnSprint = () => {
+    // calling the Update Task api (updating the Task to Sprint)
+    // if Task has already added then again we will not add we will directly return then function
+    let TaskAlreadyPresent = BackLogsInfo?.sprint?.some((task) => task?.Tasks?.includes(DraggedSprintTask))
+    if (!TaskAlreadyPresent) {
+      UpdateSprint({ Tasks: [DraggedData?._id] });
+      // when we drag the Task on Sprint then  update the BacklogsInfo
+      setBacklogsInfo((prev) => {
+        return {
+          ...prev,
+          backlogs: {
+            ...prev?.backlogs,
+            tasks: prev?.backlogs?.tasks.filter((task) => {
+              return task?._id !== DraggedData?._id;
+            }),
+          },
+          sprint: prev?.sprint?.map((sp) => {
+            if (sp.name === SprintNameToUpdated) {
+              return {
+                ...sp,
+                Tasks: [...sp?.Tasks, DraggedData],
+              };
+            } else {
+              return sp;
             }
-          }
-          else {
-            return sp
-          }
-        })
-      }
-    })
+          }),
+        };
+      });
+      setDraggedData(null)
+    }
 
-  }
+  };
+
+  const dropOnBacklogs = () => {
+
+    let TaskAlreadyPresent = BackLogsInfo?.backlogs?.tasks?.some((task) => task?._id === DraggedData?._id)
+    // if Task has already added then again we will not add we will directly return then function
+    if (!TaskAlreadyPresent) {
+      RemoveTaskFromSprint(`${BASE_URL}/user/backlogs/${SprintId}/${DraggedSprintTask?._id}`);
+      setBacklogsInfo((prev) => {
+        return {
+          ...prev,
+          backlogs: {
+            ...prev?.backlogs,
+            tasks: [...prev.backlogs?.tasks, DraggedSprintTask],
+          },
+          sprint: prev?.sprint?.map((sp) => {
+            if (sp.name === SprintNameToUpdated) {
+              return {
+                ...sp,
+                Tasks: sp?.Tasks?.filter((task) => {
+                  return task?._id !== DraggedSprintTask?._id;
+                }),
+              };
+            }
+          }),
+        };
+      });
+      setDraggedSprintTask(null)
+    }
+
+  };
 
   // creating new sprint
 
   // Create Sprint Api Call
-  const { callApi: CreateNewSprint } = usePostApi(
+  const { callApi: CreateNewSprint, data: createNewSprintMessage } = usePostApi(
     `${BASE_URL}/user/createSprint/${projectId}`
   );
 
-  // creating new Sprint
+
+
+  useEffect(() => {
+    if (createNewSprintMessage?.sprintId) {
+      const newSprint = {
+        _id: createNewSprintMessage?.sprintId,
+        name: `Sprint-${BackLogsInfo?.sprint.length + 1}`,
+        project: projectId,
+        Tasks: [],
+        isCompleted: false,
+        isStarted: false,
+      }
+      setBacklogsInfo((prev) => {
+        return {
+          ...prev,
+          sprint: [...prev.sprint, newSprint],
+        };
+      });
+    }
+  }, [createNewSprintMessage?.sprintId])
+  // creating new Sprint and update the backlog arr
   const createTheSprint = () => {
     CreateNewSprint({ name: `Sprint-${BackLogsInfo?.sprint.length + 1}` });
-    setBacklogsInfo((prev) => {
-      return {
-        ...prev,
-        sprint: [...prev.sprint],
-      };
-    });
+
   };
 
   return (
@@ -236,14 +297,43 @@ const CreateSprint = () => {
                 sprintName={sprint?.name}
                 key={index}
                 sprint={sprint}
-                onDrop={onDrag}
+                onDrop={onDropOnSprint && onDropOnSprint}
                 onDragOver={(e) => {
-                  setSprintNameToupdate(sprint?.name)
-                  console.log(sprint?.name)
-                  onDragOver(e)
+                  setSprintId(sprint?._id);
+                  setSprintNameToupdate(sprint?.name);
+                  onDragOver(e);
                 }}
-                SprintTasks={BackLogsInfo?.sprint?.find((val) => val?.name === sprint?.name)?.Tasks}
-              // OnInputChange={(filed, newValue) => {}}
+                SprintTasks={
+                  BackLogsInfo?.sprint?.find(
+                    (val) => val?.name === sprint?.name
+                  )?.Tasks
+                }
+                onSprintDragStart={(data) => {
+                  setSprintNameToupdate(sprint?.name);
+                  setDraggedSprintTask(data);
+                  setSprintId(sprint?._id);
+                }}
+                OnInputChange={(filed, newValue) => {
+                  // updating the sprint id
+                  setSprintId(sprint?._id);
+                  //  need to update
+                  setBacklogsInfo((prev) => {
+                    return {
+                      ...prev,
+                      sprint: prev?.sprint.map((val) => {
+                        if (val?._id === sprint?._id) {
+                          return {
+                            ...val,
+                            [filed]: newValue
+                          }
+                        }
+                        else {
+                          return val
+                        }
+                      })
+                    }
+                  })
+                }}
               />
             );
           })}
@@ -269,8 +359,13 @@ const CreateSprint = () => {
                 <p className="text-gray-600">Tasks are not created yet</p>
               )}
               {/* in this block all created Task will come */}
-              <div className="space-y-2">
-                {BackLogsInfo?.backlogs?.tasks?.map((ele, index) => {
+              <div
+                className="space-y-2 min-h-48"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={dropOnBacklogs && dropOnBacklogs}
+              >
+
+                {BackLogsInfo?.backlogs?.tasks?.length !== 0 ? BackLogsInfo?.backlogs?.tasks?.map((ele, index) => {
                   // mapping all the tasks
                   return (
                     <Task
@@ -287,15 +382,17 @@ const CreateSprint = () => {
                         JSON.parse(localStorage.getItem("user"))._id
                       }
                       onDelete={() => {
-                        console.log(ele, "ele?._id");
+                        // set the state to store the Delete Id
                         settaskIdToDelete(ele?._id);
                         setShowDeletePopup(true);
                       }}
-
                       onDragStart={() => OnDragStart(ele)}
                     />
                   );
-                })}
+                }) :
+                  <h1 className="font-semibold text-xl text-gray-400">No Task  Has Created</h1>
+                }
+
               </div>
               {/*  */}
               <div className="mt-4">

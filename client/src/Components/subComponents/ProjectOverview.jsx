@@ -21,7 +21,7 @@ const ProjectOverView = () => {
   const [Title, setTitle] = useState("");
   // calling the get all project api
   const [AllProjects, setAllProjects] = useState([]);
-  const [projectToUpdate, setProjectToUpdate] = useState(null)
+  const [projectToUpdate, setProjectToUpdate] = useState(null);
   // calling get api
   const {
     data: AllTheProjects,
@@ -41,16 +41,19 @@ const ProjectOverView = () => {
     callApi: AddNewProject,
   } = usePutApi(`${BASE_URL}/admin/createProject`);
 
-
-  const [ProjectSelectedId, setProjectSelectedId] = useState(null)
+  const [ProjectSelectedId, setProjectSelectedId] = useState(null);
   // calling the Update api
-  const { data: updateProject, loading: updateProjectLoading, callApi:updatePresentProject } = usePutApi(`${BASE_URL}/admin/updateProject/${ProjectSelectedId}`)
+  const {
+    data: updateProject,
+    loading: updateProjectLoading,
+    callApi: updatePresentProject,
+  } = usePutApi(`${BASE_URL}/admin/updateProject/${ProjectSelectedId}`);
 
   useEffect(() => {
     GetAllProjects();
     GetAllUser();
     setTitle(""); // removes the popup
-  }, [AddProjectInfo,updateProject]);
+  }, [AddProjectInfo, updateProject]);
 
   // updating the Users
   const UserToAdd = useMemo(() => {
@@ -103,6 +106,7 @@ const ProjectOverView = () => {
           updateData={projectToUpdate}
           onSave={(data) => updatePresentProject(data)}
           loading={updateProjectLoading}
+          isToUpdate={true}
         />
       ),
     },
@@ -190,13 +194,13 @@ const ProjectOverView = () => {
                             users: ele?.userEmails?.map((user) => {
                               return {
                                 value: user,
-                                label: user
-                              }
-                            })
-                          }
-                          setProjectToUpdate(dataToUpdate)
+                                label: user,
+                              };
+                            }),
+                          };
+                          setProjectToUpdate(dataToUpdate);
                           // setting the update Id
-                          setProjectSelectedId(ele?.id)
+                          setProjectSelectedId(ele?.id);
                         }}
                       >
                         Updated

@@ -15,11 +15,12 @@ const AddProject = ({
   onSave,
   loading = false,
   users = [],
-  updateData
+  updateData,
+  isToUpdate = false,
 }) => {
-
-
-  const [selectedUsers, setSelectedUsers] = useState(updateData&& updateData?.users);
+  const [selectedUsers, setSelectedUsers] = useState(
+    updateData && updateData?.users
+  );
   // project Data
   const [ProjectData, setProjectData] = useState({
     name: "",
@@ -28,23 +29,21 @@ const AddProject = ({
     endTime: "",
   });
 
-
   useEffect(() => {
-    console.log(updateData)
+    console.log(updateData);
     if (updateData) {
       setProjectData((prev) => ({
         ...prev,
         name: updateData.name,
         description: updateData.description,
         startTime: updateData.startTime?.split("T")[0],
-        endTime: updateData.endTime?.split("T")[0]
+        endTime: updateData.endTime?.split("T")[0],
       }));
 
-      console.log(updateData?.users)
+      console.log(updateData?.users);
       setSelectedUsers(updateData?.users || []);
     }
   }, [updateData]);
-
 
   // warnings
   const [ProjectDataWarnings, setProjectDataWarnings] = useState({
@@ -93,9 +92,14 @@ const AddProject = ({
     // let presentDate=Date.now()
     // start  Date validation
     if (!ProjectData.startTime) {
-      newWarnings.startTimeWarnings = "Project start date has not been mentioned";
-    } else if (Date.now() > new Date(ProjectData.startTime).getTime()) {
-      newWarnings.startTimeWarnings = "Project start date can't be less than today's date";
+      newWarnings.startTimeWarnings =
+        "Project start date has not been mentioned";
+    } else if (
+      Date.now() > new Date(ProjectData.startTime).getTime() &&
+      !isToUpdate
+    ) {
+      newWarnings.startTimeWarnings =
+        "Project start date can't be less than today's date";
     } else {
       newWarnings.startTimeWarnings = "";
     }
@@ -103,11 +107,14 @@ const AddProject = ({
     //  end Date validation
     if (!ProjectData.endTime) {
       newWarnings.endTimeWarnings = "Project end date has not mentioned";
-    }
-    else if (new Date(ProjectData.startTime).getTime() > new Date(ProjectData.endTime).getTime()) {
-      newWarnings.endTimeWarnings = "Project end date can't be less then project start date";
-    }
-    else {
+    } else if (
+      new Date(ProjectData.startTime).getTime() >
+        new Date(ProjectData.endTime).getTime() &&
+      !isToUpdate
+    ) {
+      newWarnings.endTimeWarnings =
+        "Project end date can't be less then project start date";
+    } else {
       newWarnings.endTimeWarnings = "";
     }
 

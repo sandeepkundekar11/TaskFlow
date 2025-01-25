@@ -55,14 +55,14 @@ class UserProjectRepo {
   async creatNewSprint(info) {
     const { name, projectId } = info;
     try {
-      let sprint= await SprintModel.create({
+      let sprint = await SprintModel.create({
         name: name,
         project: projectId,
       });
 
       return {
-        sprintId:sprint?._id
-      }
+        sprintId: sprint?._id,
+      };
     } catch (error) {
       console.log("error  while creating new Sprint", error.message);
     }
@@ -110,6 +110,34 @@ class UserProjectRepo {
     }
   }
 
+  async removeTaskFromSprint({ Task, sprintId }) {
+    try {
+
+      console.log("Task", Task, sprintId)
+      // Update task statuses in parallel
+      let updateTask = await TaskModel.updateOne({ _id: Task }, {
+        $set: {
+          IsInSprint: false
+        }
+      });
+
+      // Remove tasks from the sprint
+
+      let updateSprint = await SprintModel.updateOne(
+        { _id: sprintId },
+        {
+          $pull: {
+            Tasks: Task,
+          },
+        }
+      );
+
+      return updateSprint
+    } catch (error) {
+      console.log("error while removing the task from the sprint"); //error
+    }
+  }
+
   // get project backlogs info
   async getProjectBacklogs(projectId) {
     try {
@@ -119,7 +147,7 @@ class UserProjectRepo {
       ).populate({
         path: "tasks",
         model: "task",
-        select: "title author IsInSprint",
+        select: "title author IsInSprint taskCode",
         match: { IsInSprint: false },
         populate: {
           path: "author",
@@ -141,10 +169,15 @@ class UserProjectRepo {
           { isStarted: isStarted },
           { isCompleted: isCompleted },
         ],
-      }).populate({
+      },"name startDate endDate project Tasks isCompleted isStarted").populate({
         path: "Tasks",
         model: "task",
         select: "title author IsInSprint",
+        populate: {
+          path: "author",
+          model: "user",
+          select: "name",
+        },
       });
     } catch (error) {
       console.log("error while getting the project backlogs");

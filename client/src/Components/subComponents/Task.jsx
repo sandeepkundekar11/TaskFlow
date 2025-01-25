@@ -78,7 +78,7 @@ const Task = ({
           </div>
         </div>
       ) : (
-        <div className="w-full grid grid-cols-4 border rounded-md p-2  bg-slate-100 cursor-move " draggable onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <div className="w-full grid grid-cols-4 border rounded-md p-2 items-center bg-slate-100 cursor-move " draggable onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div className="col-span-3 flex h-full items-center pl-4">
             <CustomAvator user={user} />
             <div className="w-full flex items-center h-10">

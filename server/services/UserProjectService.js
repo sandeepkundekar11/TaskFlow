@@ -67,7 +67,7 @@ class UserProjectService {
         return {
           status: 200,
           message: "create Sprint has created successfully",
-          sprintId: createNewSprint.sprintId
+          sprintId: createNewSprint.sprintId,
         };
       }
     } catch (error) {
@@ -87,6 +87,22 @@ class UserProjectService {
 
       if (updateSprint) {
         return { status: 200, message: "sprint updated succssfully" };
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+  // deleet the Task from the sprint
+
+  async deleteTaskFromSprintService({ Tasks, sprintId }) {
+    try {
+      let deleteTask = await UserProjectRepo.removeTaskFromSprint(
+        Tasks,
+        sprintId
+      );
+      if (deleteTask) {
+        return { status: 200, message: "Task has deleted successfully" };
       }
     } catch (error) {
       return { status: 500, message: error.message };

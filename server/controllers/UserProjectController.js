@@ -203,6 +203,30 @@ class UserProjectController {
     }
   }
 
+  // remove Task from the Sprint
+
+  async removeTaskFromSprint(req, res) {
+    const { Tasks } = req.body;
+    const { sprintId } = req.params;
+    if (!sprintId || !Tasks) {
+      return res.status(404).json({ message: "Provide all information" });
+    }
+    try {
+      let removeTask = await UserProjectService.deleteTaskFromSprintService({
+        Tasks,
+        sprintId,
+      });
+
+      if (removeTask) {
+        return res
+          .status(removeTask.status)
+          .json({ message: removeTask.message });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
   // get project backlogs
   async getProjectBacklogs(req, res) {
     let { projectId } = req.params;

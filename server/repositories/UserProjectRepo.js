@@ -55,14 +55,14 @@ class UserProjectRepo {
   async creatNewSprint(info) {
     const { name, projectId } = info;
     try {
-      let sprint= await SprintModel.create({
+      let sprint = await SprintModel.create({
         name: name,
         project: projectId,
       });
 
       return {
-        sprintId:sprint?._id
-      }
+        sprintId: sprint?._id,
+      };
     } catch (error) {
       console.log("error  while creating new Sprint", error.message);
     }
@@ -110,6 +110,30 @@ class UserProjectRepo {
     }
   }
 
+  async removeTaskFromSprint(info) {
+    try {
+      const { Tasks, sprintId } = info;
+      // Update task statuses in parallel
+      await TaskModel.updateMany(
+        { _id: { $in: Tasks } },
+        { IsInSprint: false }
+      );
+
+      // Remove tasks from the sprint
+
+      await SprintModel.updateOne(
+        { _id: sprintId },
+        {
+          $pull: {
+            Tasks: { $each: Tasks },
+          },
+        }
+      );
+    } catch (error) {
+      console.log("error while removing the task from the sprint"); //error
+    }
+  }
+
   // get project backlogs info
   async getProjectBacklogs(projectId) {
     try {
@@ -119,7 +143,7 @@ class UserProjectRepo {
       ).populate({
         path: "tasks",
         model: "task",
-        select: "title author IsInSprint",
+        select: "title author IsInSprint taskCode",
         match: { IsInSprint: false },
         populate: {
           path: "author",
@@ -145,6 +169,11 @@ class UserProjectRepo {
         path: "Tasks",
         model: "task",
         select: "title author IsInSprint",
+        populate: {
+          path: "author",
+          model: "user",
+          select: "name",
+        },
       });
     } catch (error) {
       console.log("error while getting the project backlogs");

@@ -55,4 +55,11 @@ UserRouter.get(
   UserProjectController.getProjectBacklogs
 );
 
+//  delete the Task from  sprint
+
+UserRouter.delete(
+  "/backlogs/:sprintId",
+  userAuth,
+  UserProjectController.removeTaskFromSprint
+);
 export default UserRouter;

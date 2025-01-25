@@ -6,7 +6,7 @@ const useDeleteApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { SuccessToaster, ErrorToaster } = Toasters();
-  const DeleteApi = async (url, info) => {
+  const DeleteApi = async (url) => {
     setLoading(true);
     let token = JSON.parse(localStorage.getItem("Token"));
     let response = await fetch(url, {
@@ -15,8 +15,6 @@ const useDeleteApi = () => {
         Authorization: `Bearer ${token}`,
         "content-type": "application/json",
       },
-
-      body: JSON.stringify(info),
     });
     let responseBody = await response.json();
     if (response.status === 200) {

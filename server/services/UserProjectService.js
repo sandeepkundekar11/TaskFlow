@@ -1,6 +1,7 @@
 import ProjectModel from "../model/ProjectModel.js";
 import TaskModel from "../model/TaskModel.js";
 import UserProjectRepo from "../repositories/UserProjectRepo.js";
+import { isValidProjectDuration } from "../Utility/ProjectValidation.js";
 
 class UserProjectService {
   async createTaskService(info) {
@@ -78,6 +79,11 @@ class UserProjectService {
   // updating the sprint
   async updateSprintService({ startDate, endDate, Tasks, sprintId }) {
     try {
+
+      let validDuration = isValidProjectDuration(startDate, endDate, 6)
+      if (!validDuration) {
+        return { status: 400, message: "sprint duration should be Allist 6 days" }
+      }
       let updateSprint = await UserProjectRepo.updateSprint({
         startDate,
         endDate,
@@ -95,14 +101,14 @@ class UserProjectService {
 
   // deleet the Task from the sprint
 
-  async deleteTaskFromSprintService({ Tasks, sprintId }) {
+  async deleteTaskFromSprintService({ Task, sprintId }) {
     try {
-      let deleteTask = await UserProjectRepo.removeTaskFromSprint(
-        Tasks,
+      let deleteTask = await UserProjectRepo.removeTaskFromSprint({
+        Task,
         sprintId
-      );
+      });
       if (deleteTask) {
-        return { status: 200, message: "Task has deleted successfully" };
+        return { status: 200, message: "Task has Removed Successfully" };
       }
     } catch (error) {
       return { status: 500, message: error.message };

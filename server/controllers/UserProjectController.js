@@ -206,14 +206,13 @@ class UserProjectController {
   // remove Task from the Sprint
 
   async removeTaskFromSprint(req, res) {
-    const { Tasks } = req.body;
-    const { sprintId } = req.params;
-    if (!sprintId || !Tasks) {
+    const { sprintId, Task } = req.params;
+    if (!sprintId || !Task) {
       return res.status(404).json({ message: "Provide all information" });
     }
     try {
       let removeTask = await UserProjectService.deleteTaskFromSprintService({
-        Tasks,
+        Task,
         sprintId,
       });
 

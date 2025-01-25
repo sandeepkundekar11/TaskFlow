@@ -1,7 +1,7 @@
 import express from "express";
-import userAuth from "../middlerwares/userAuth.js";
 import userController from "../controllers/userController.js";
 import UserProjectController from "../controllers/UserProjectController.js";
+import userAuth from "../middlerwares/userAuth.js";
 
 const UserRouter = express.Router();
 
@@ -58,7 +58,7 @@ UserRouter.get(
 //  delete the Task from  sprint
 
 UserRouter.delete(
-  "/backlogs/:sprintId",
+  "/backlogs/:sprintId/:Task",
   userAuth,
   UserProjectController.removeTaskFromSprint
 );

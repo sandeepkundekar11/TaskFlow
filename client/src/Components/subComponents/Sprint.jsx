@@ -25,36 +25,43 @@ const Sprint = ({
               Start Sprint
             </Button>
           </div>
-          <div className="grid w-96 grid-cols-2 mt-2">
+          <div className="grid w-[800px] grid-cols-3 items-center mt-2">
             <div className="col-span-1">
-              <label htmlFor="" className="text-sm">
+              <p className="text-sm">
                 Start Date
-              </label>
+              </p>
               <input
                 type="date"
                 className="border p-1 rounded-md"
                 name="startTime"
-                value={sprint?.startTime}
+                value={sprint?.startDate}
                 id=""
-                onChange={(e) => OnInputChange("startTime", e.target.value)}
+                onChange={(e) => OnInputChange("startDate", e.target.value)}
               />
             </div>
             <div className="col-span-1">
-              <label htmlFor="">End Date</label>
+              <p>End Date</p>
               <input
                 type="date"
                 className="border p-1 rounded-md"
-                name="endTime"
-                value={sprint?.endTime}
+                name="endDate"
+                value={sprint?.endDate}
                 id=""
-                onChange={(e) => OnInputChange("endTime", e.target.value)}
+                onChange={(e) => OnInputChange("endDate", e.target.value)}
               />
             </div>
+
+            {
+              (sprint?.startTime !== null && sprint?.endTime !== null) && <div className="col-span-1">
+                <Button className="w-24">Save</Button>
+              </div>
+            }
+
           </div>
         </div>
       </CardHeader>
       <CardContent
-        className="bg-slate-50 flex flex-col justify-center items-center min-h-24 max-h-max border-dashed border-2"
+        className="bg-slate-50 flex flex-col justify-center w-full space-y-3 items-center min-h-24 max-h-max border-dashed border-2"
         onDrop={onDrop}
         onDragOver={onDragOver}
       >

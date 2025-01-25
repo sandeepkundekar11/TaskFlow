@@ -110,25 +110,29 @@ class UserProjectRepo {
     }
   }
 
-  async removeTaskFromSprint(info) {
+  async removeTaskFromSprint({ Task, sprintId }) {
     try {
-      const { Tasks, sprintId } = info;
+
+      console.log("Task", Task, sprintId)
       // Update task statuses in parallel
-      await TaskModel.updateMany(
-        { _id: { $in: Tasks } },
-        { IsInSprint: false }
-      );
+      let updateTask = await TaskModel.updateOne({ _id: Task }, {
+        $set: {
+          IsInSprint: false
+        }
+      });
 
       // Remove tasks from the sprint
 
-      await SprintModel.updateOne(
+      let updateSprint = await SprintModel.updateOne(
         { _id: sprintId },
         {
           $pull: {
-            Tasks: { $each: Tasks },
+            Tasks: Task,
           },
         }
       );
+
+      return updateSprint
     } catch (error) {
       console.log("error while removing the task from the sprint"); //error
     }
@@ -165,7 +169,7 @@ class UserProjectRepo {
           { isStarted: isStarted },
           { isCompleted: isCompleted },
         ],
-      }).populate({
+      },"name startDate endDate project Tasks isCompleted isStarted").populate({
         path: "Tasks",
         model: "task",
         select: "title author IsInSprint",

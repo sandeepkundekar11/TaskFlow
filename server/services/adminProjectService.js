@@ -1,6 +1,6 @@
 import UserModel from "../model/UserModel.js";
 import adminProjectRepo from "../repositories/adminProjectRepo.js";
-import areArraysEqualIgnoreOrder from "../Utility/ArraysOprations.js";
+import { isValidProjectDuration } from "../Utility/ProjectValidation.js";
 
 class AdminProjectService {
   async addNewproject(projectInfo) {
@@ -16,6 +16,15 @@ class AdminProjectService {
         };
       }
 
+      // let checking that the difference between  project start date and end date must be greater then 10 days
+
+      let validDuration = isValidProjectDuration(startTime, endTime,10)
+      if (!validDuration) {
+        return {
+          status: 403,
+          message: "project duration should be Atlist 10 days"
+        }
+      }
       // finding the userids based on users email
       let userIds = [];
       if (users) {

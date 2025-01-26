@@ -157,7 +157,7 @@ const CreateSprint = () => {
 
   const [SprintId, setSprintId] = useState(null);
   // calling the update Sprint
-  const { callApi: UpdateSprint, data: SprintUpdateData } = usePutApi(
+  const { callApi: UpdateSprint,} = usePutApi(
     `${BASE_URL}/user/updateSprint/${projectId}/${SprintId}`
   );
   // remove Task Api
@@ -277,6 +277,8 @@ const CreateSprint = () => {
 
   };
 
+
+
   return (
     <div className="w-full p-4">
       <Card className="w-[95%]  h-auto">
@@ -294,6 +296,7 @@ const CreateSprint = () => {
           {BackLogsInfo?.sprint?.map((sprint, index) => {
             return (
               <Sprint
+                projectId={projectId}
                 sprintName={sprint?.name}
                 key={index}
                 sprint={sprint}
@@ -333,6 +336,11 @@ const CreateSprint = () => {
                       })
                     }
                   })
+                }}
+
+                onUpdateTime={(startDate, endDate) => {
+                  // calling the updated sprint api
+                  UpdateSprint({ startDate, endDate })
                 }}
               />
             );

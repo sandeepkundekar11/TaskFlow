@@ -1,4 +1,5 @@
 import ProjectModel from "../model/ProjectModel.js";
+import SprintModel from "../model/SprintModel.js";
 import TaskModel from "../model/TaskModel.js";
 import UserProjectRepo from "../repositories/UserProjectRepo.js";
 import { isValidProjectDuration } from "../Utility/ProjectValidation.js";
@@ -77,13 +78,34 @@ class UserProjectService {
   }
 
   // updating the sprint
-  async updateSprintService({ startDate, endDate, Tasks, sprintId }) {
+  async updateSprintService({ startDate, endDate, Tasks, sprintId, isStartSprint = false }) {
     try {
 
-      let validDuration = isValidProjectDuration(startDate, endDate, 6)
-      if (!validDuration) {
-        return { status: 400, message: "sprint duration should be Allist 6 days" }
+
+      if (startDate && endDate) {
+        let validDuration = isValidProjectDuration(startDate, endDate, 6)
+        if (!validDuration) {
+          return { status: 400, message: "sprint duration should be Allist 6 days" }
+        }
       }
+
+      //  if  isStartSprint is true then we are starting the sprint
+      if (isStartSprint) {
+        // first we will check that sprint should have atlist 4 tasks
+
+        let sprintTasks = await SprintModel.findOne({ _id: sprintId }, "Tasks startDate endDate")
+        if (sprintTasks.Tasks.length < 4) {
+          return { status: 400, message: "Sprint should have Atlist 4 Tasks" }
+        }
+        else if (!sprintTasks.startDate || !sprintTasks.endDate) {
+          return { status: 400, message: "Sprint Duration has not updated" }
+        }
+        let startSprint = await UserProjectRepo.StartSprintRepo(sprintId)
+        if (startSprint) {
+          return { status: 200, message: "sprint has started" }
+        }
+      }
+      //else updating the sprint
       let updateSprint = await UserProjectRepo.updateSprint({
         startDate,
         endDate,

@@ -106,14 +106,25 @@ class UserProjectRepo {
         return SprintAupdate;
       }
     } catch (error) {
-      console.log("error  while Upading Sprint");
+      console.log("error  while Updating Sprint");
+    }
+  }
+
+  // start sprint repo
+  async StartSprintRepo(sprintId) {
+    try {
+      return await SprintModel.updateOne({ _id: sprintId }, {
+        $set: {
+          isStarted: true
+        }
+      })
+    } catch (error) {
+      console.log("error  while starting  Sprint");
     }
   }
 
   async removeTaskFromSprint({ Task, sprintId }) {
     try {
-
-      console.log("Task", Task, sprintId)
       // Update task statuses in parallel
       let updateTask = await TaskModel.updateOne({ _id: Task }, {
         $set: {
@@ -169,7 +180,7 @@ class UserProjectRepo {
           { isStarted: isStarted },
           { isCompleted: isCompleted },
         ],
-      },"name startDate endDate project Tasks isCompleted isStarted").populate({
+      }, "name startDate endDate project Tasks isCompleted isStarted").populate({
         path: "Tasks",
         model: "task",
         select: "title author IsInSprint",

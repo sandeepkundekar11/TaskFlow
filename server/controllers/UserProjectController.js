@@ -168,10 +168,10 @@ class UserProjectController {
   // update Sprint
 
   async updateSprint(req, res) {
-    const { startDate, endDate, Tasks = [] } = req.body;
+    const { startDate, endDate, Tasks, isStartSprint = false } = req.body;
     const author = req.userId;
     const { projectId, sprintId } = req.params;
-    if (!startDate && !endDate && !Tasks && Tasks.length === 0) {
+    if (!startDate && !endDate && !Tasks &&!isStartSprint) {
       return res.status(404).json({ message: "Provide all information" });
     }
     try {
@@ -181,6 +181,7 @@ class UserProjectController {
         endDate,
         Tasks,
         sprintId,
+        isStartSprint
       });
 
       // getting the sprint

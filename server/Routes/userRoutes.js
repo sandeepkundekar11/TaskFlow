@@ -1,4 +1,5 @@
 import express from "express";
+import ProjectSprintController from "../controllers/ProjectSprintController.js";
 import userController from "../controllers/userController.js";
 import UserProjectController from "../controllers/UserProjectController.js";
 import userAuth from "../middlerwares/userAuth.js";
@@ -62,4 +63,15 @@ UserRouter.delete(
   userAuth,
   UserProjectController.removeTaskFromSprint
 );
+
+
+// get  sprint information
+UserRouter.get("/sprintInfo/:sprintId",
+  userAuth,
+  ProjectSprintController.getProjectSprintController)
+
+
+// get all project sprints
+
+UserRouter.get("/allSprints/:projectId", userAuth, ProjectSprintController.getAllProjectSprints)
 export default UserRouter;

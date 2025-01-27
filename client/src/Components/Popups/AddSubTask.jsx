@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import Popup from "./Popup";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { X } from "lucide-react";
 import { useState } from "react";
-const AddSubTask = ({ onCancel, onSave }) => {
-  const [SubTask, setSubTask] = useState("");
+import Popup from "./Popup";
+const AddSubTask = ({ onCancel, onSave, loading, subTask, onSubtaskChange }) => {
+  const [Warning, setWarnings] = useState()
   return (
     <Popup>
       <div className="w-[400px] min-h-52 bg-white shadow-lg rounded-md p-3">
@@ -19,17 +19,27 @@ const AddSubTask = ({ onCancel, onSave }) => {
           <Textarea
             placeholder="Enter SubTask Description."
             className="h-20"
-            onChange={(e) => {
-              setSubTask(e.target.value);
-            }}
+            value={subTask}
+            onChange={(e) => onSubtaskChange(e)}
           />
+          <p className="text-sm font-bold mt-1 text-red-600">{Warning}</p>
           <div className="w-full mt-4 flex justify-end">
             <Button
               onClick={() => {
-                onSave(SubTask);
+                if (subTask.length < 5) {
+                  setWarnings("subTask can't be less then 5 characters")
+                }
+                else {
+                  setWarnings("")
+                  onSave();
+                }
+
               }}
             >
-              Add SubTask
+              {
+                loading ? <div className="w-7 h-7  rounded-full bg-transparent border-b-2 border-l-2 animate-spin"></div> : " Add SubTask"
+              }
+
             </Button>
           </div>
         </div>

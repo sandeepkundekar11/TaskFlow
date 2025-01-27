@@ -65,9 +65,31 @@ class ProjectSprintRepo {
         }
       );
 
-      return TaskUpdated;
+      return newTask;
     } catch (error) {
-      console.log("erorr while  creating the subTask");
+      console.log("error while  creating the subTask");
+    }
+  }
+
+  // get Available sprints of project
+  async getAvailableProjectSprint({ projectId }) {
+    try {
+      return await SprintModel.find({ project: projectId, isStarted: true, isCompleted: true }, "name startDate endDate")
+    } catch (error) {
+      console.log("error while get all sprints");
+    }
+  }
+
+  // get projectInfo 
+  async getProjectInfo({ projectId }) {
+    try {
+      return await ProjectModel.findOne({ _id: projectId }, "name description users").populate({
+        path: "users",
+        model: "user",
+        select: "name"
+      })
+    } catch (error) {
+      console.log("error while get  project info");
     }
   }
 }

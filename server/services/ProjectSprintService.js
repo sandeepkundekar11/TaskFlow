@@ -33,7 +33,29 @@ class ProjectSprintService {
         return {
           status: 200,
           message: "Task Has created Successfullt",
+          subTaskId: newTask._id
         };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // get Project and available completed sprint info
+
+  async getProjectAndCompletedSprintInfo({ projectId }) {
+    try {
+      let projectInfo = await ProjectSprintRepo.getProjectInfo({ projectId })
+      let completedSprintInfo = await ProjectSprintRepo.getAvailableProjectSprint({ projectId })
+      if (projectInfo && completedSprintInfo) {
+        return {
+          status: 200,
+          sprintInfo: completedSprintInfo,
+          projectInfo: projectInfo
+        }
       }
     } catch (error) {
       return {

@@ -46,10 +46,28 @@ class ProjectSprintController {
 
         return res
           .status(newSubTask?.status)
-          .json({ message: newSubTask.message });
+          .json({ message: newSubTask.message, subTaskId: newSubTask.subTaskId });
       }
     } catch (error) {
-      return res.json({ message });
+      return res.json({ message: error.message });
+    }
+  }
+
+
+  // get completed sprint and project info
+  async getProjectInfoController(req, res) {
+    try {
+      let { projectId } = req.params
+      let project = await ProjectSprintService.getProjectAndCompletedSprintInfo({ projectId })
+      if (project) {
+        return res.status(project.status).json({
+          message: project.message,
+          projectInfo: project.projectInfo,
+          sprint: project.sprintInfo
+        })
+      }
+    } catch (error) {
+      return res.json({ message: error.message });
     }
   }
 }

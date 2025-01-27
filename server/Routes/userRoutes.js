@@ -72,12 +72,16 @@ UserRouter.get(
   ProjectSprintController.getProjectSprintsController
 );
 
-// creat new Subtask
+// create new Subtask
 
 UserRouter.post(
   "/createSubTask/:projectId/:TaskId",
   userAuth,
   ProjectSprintController.createNewSubTaskTaskController
 );
+
+
+// get project and completed sprint Info
+UserRouter.get("/projectAndCompletedSprint/:projectId", userAuth, ProjectSprintController.getProjectInfoController)
 
 export default UserRouter;

@@ -18,7 +18,6 @@ const UpdateActivities = async (ActivityData) => {
     if (name) ActivityObj.name = name;
     if (action) ActivityObj.action = action;
     if (task) ActivityObj.task = task; // string
-
     // generating the new Task Id
     let newTaskId = await ProjectModel.findOneAndUpdate(
       { _id: createdTaskId },

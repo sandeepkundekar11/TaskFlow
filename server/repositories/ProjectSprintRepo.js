@@ -1,49 +1,74 @@
-import ProjectModel from "../model/ProjectModel.js"
-import SprintModel from "../model/SprintModel.js"
+import ProjectModel from "../model/ProjectModel.js";
+import SprintModel from "../model/SprintModel.js";
+import SubTaskModel from "../model/SubTasksModel.js";
+import TaskModel from "../model/TaskModel.js";
 
 class ProjectSprintRepo {
-
-    async getSprintInfo({ sprintId }) {
-        try {
-            return await SprintModel.findOne({ _id: sprintId }).populate({
-                path: "project",
-                model: "project",
-                select: "name description"
-            }).populate(
-                {
-                    path: "Tasks",
-                    model: "task",
-                    // populating subTasks
-                    populate: {
-                        path: "subTasks",
-                        model: "subtask",
-                    }
-                }
-            )
-        } catch (error) {
-            console.log("error while getting the SprintInfo")
-        }
+  async getSprintInfo({ projectId }) {
+    try {
+      return await SprintModel.findOne({
+        $and: [
+          { project: projectId },
+          { isCompleted: false },
+          { isStarted: true },
+        ],
+      })
+        .populate({
+          path: "project",
+          model: "project",
+          select: "name description",
+        })
+        .populate({
+          path: "Tasks",
+          model: "task",
+          select: "title author subTasks taskCode",
+          //   populating the author
+          populate: [
+            {
+              path: "author",
+              model: "user",
+              select: "name _id ", // Add `select` for author if needed
+            },
+            {
+              path: "subTasks",
+              model: "subtask",
+              populate: {
+                path: "author",
+                model: "user",
+                select: "name _id",
+              },
+            },
+          ],
+        });
+    } catch (error) {
+      console.log("erorr while getting sprints info");
     }
+  }
 
+  // create a subtask
+  async createNewSubTask({ authorId, title, TaskId, projectId }) {
+    try {
+      // creating subTask
+      let newTask = await SubTaskModel.create({
+        author: authorId,
+        title: title,
+        status: "todo",
+      });
 
-    // get all available sprint available sprint of that project
-
-    async getAllSprints({ projectId }) {
-        try {
-            return await SprintModel.find({ project: projectId }, "name Tasks isCompleted")
-        } catch (error) {
-            console.log("error while getting  all sprints")
+      // after updating the parent Task
+      let TaskUpdated = await TaskModel.updateOne(
+        { _id: TaskId },
+        {
+          $addToSet: {
+            subTasks: newTask._id,
+          },
         }
-    }
+      );
 
-    // get project info
-    async getProjectInfo(projectId) {
-        try {
-            return await ProjectModel.findOne({ _id: projectId }, "name description")
-
-        } catch (error) {
-            console.log("error while getting  project info")
-        }
+      return TaskUpdated;
+    } catch (error) {
+      console.log("erorr while  creating the subTask");
     }
+  }
 }
-export default new ProjectSprintRepo
+export default new ProjectSprintRepo();

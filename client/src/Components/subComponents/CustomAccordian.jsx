@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../ui/button";
 const CustomTaskAccordian = ({
   className,
@@ -11,16 +11,17 @@ const CustomTaskAccordian = ({
   children,
   onAddTask,
 }) => {
-  const [name, setName] = useState("a");
   const [showDropdown, setShoDropdown] = useState(false);
-  useEffect(() => {
+
+  const InitialName = useMemo(() => {
     const nameParts = Author?.split(" ");
     const initials =
       nameParts?.length >= 2
         ? nameParts[0][0] + nameParts[1][0]
         : Author[0] + (Author[1] || "");
-    setName(initials);
-  }, []);
+    return initials;
+  }, [Author]);
+
   return (
     <div className="w-full bg-white mt-2 px-2 overflow-y-hidden rounded-md">
       {/*  */}
@@ -35,7 +36,7 @@ const CustomTaskAccordian = ({
           <div className="flex space-x-10">
             <Avatar className="border-gray-600  shadow-2xl border -ml-5">
               <AvatarFallback className="bg-blue-200">
-                {name.toUpperCase()}
+                {InitialName.toUpperCase()}
               </AvatarFallback>
             </Avatar>
 

@@ -64,14 +64,20 @@ UserRouter.delete(
   UserProjectController.removeTaskFromSprint
 );
 
+// get projects sprint which is currently running
 
-// get  sprint information
-UserRouter.get("/sprintInfo/:sprintId",
+UserRouter.get(
+  "/getRunningSprint/:projectId",
   userAuth,
-  ProjectSprintController.getProjectSprintController)
+  ProjectSprintController.getProjectSprintsController
+);
 
+// creat new Subtask
 
-// get all project sprints
+UserRouter.post(
+  "/createSubTask/:projectId/:TaskId",
+  userAuth,
+  ProjectSprintController.createNewSubTaskTaskController
+);
 
-UserRouter.get("/allSprints/:projectId", userAuth, ProjectSprintController.getAllProjectSprints)
 export default UserRouter;

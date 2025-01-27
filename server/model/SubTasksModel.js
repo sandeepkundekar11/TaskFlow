@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const SubTaskSchema =new Schema({
+const SubTaskSchema = new Schema({
   title: {
     type: String,
   },
@@ -12,6 +12,9 @@ const SubTaskSchema =new Schema({
     type: String,
     default: "todo",
     enum: ["todo", "inProgress", "completed"],
+  },
+  taskCode: {
+    type: String,
   },
 });
 

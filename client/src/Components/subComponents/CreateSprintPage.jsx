@@ -157,7 +157,7 @@ const CreateSprint = () => {
 
   const [SprintId, setSprintId] = useState(null);
   // calling the update Sprint
-  const { callApi: UpdateSprint,} = usePutApi(
+  const { callApi: UpdateSprint } = usePutApi(
     `${BASE_URL}/user/updateSprint/${projectId}/${SprintId}`
   );
   // remove Task Api
@@ -184,7 +184,9 @@ const CreateSprint = () => {
   const onDropOnSprint = () => {
     // calling the Update Task api (updating the Task to Sprint)
     // if Task has already added then again we will not add we will directly return then function
-    let TaskAlreadyPresent = BackLogsInfo?.sprint?.some((task) => task?.Tasks?.includes(DraggedSprintTask))
+    let TaskAlreadyPresent = BackLogsInfo?.sprint?.some((task) =>
+      task?.Tasks?.includes(DraggedSprintTask)
+    );
     if (!TaskAlreadyPresent) {
       UpdateSprint({ Tasks: [DraggedData?._id] });
       // when we drag the Task on Sprint then  update the BacklogsInfo
@@ -209,17 +211,19 @@ const CreateSprint = () => {
           }),
         };
       });
-      setDraggedData(null)
+      setDraggedData(null);
     }
-
   };
 
   const dropOnBacklogs = () => {
-
-    let TaskAlreadyPresent = BackLogsInfo?.backlogs?.tasks?.some((task) => task?._id === DraggedData?._id)
+    let TaskAlreadyPresent = BackLogsInfo?.backlogs?.tasks?.some(
+      (task) => task?._id === DraggedData?._id
+    );
     // if Task has already added then again we will not add we will directly return then function
     if (!TaskAlreadyPresent) {
-      RemoveTaskFromSprint(`${BASE_URL}/user/backlogs/${SprintId}/${DraggedSprintTask?._id}`);
+      RemoveTaskFromSprint(
+        `${BASE_URL}/user/backlogs/${SprintId}/${DraggedSprintTask?._id}`
+      );
       setBacklogsInfo((prev) => {
         return {
           ...prev,
@@ -239,9 +243,8 @@ const CreateSprint = () => {
           }),
         };
       });
-      setDraggedSprintTask(null)
+      setDraggedSprintTask(null);
     }
-
   };
 
   // creating new sprint
@@ -250,8 +253,6 @@ const CreateSprint = () => {
   const { callApi: CreateNewSprint, data: createNewSprintMessage } = usePostApi(
     `${BASE_URL}/user/createSprint/${projectId}`
   );
-
-
 
   useEffect(() => {
     if (createNewSprintMessage?.sprintId) {
@@ -262,7 +263,7 @@ const CreateSprint = () => {
         Tasks: [],
         isCompleted: false,
         isStarted: false,
-      }
+      };
       setBacklogsInfo((prev) => {
         return {
           ...prev,
@@ -270,14 +271,11 @@ const CreateSprint = () => {
         };
       });
     }
-  }, [createNewSprintMessage?.sprintId])
+  }, [createNewSprintMessage?.sprintId]);
   // creating new Sprint and update the backlog arr
   const createTheSprint = () => {
     CreateNewSprint({ name: `Sprint-${BackLogsInfo?.sprint.length + 1}` });
-
   };
-
-
 
   return (
     <div className="w-full p-4">
@@ -327,20 +325,18 @@ const CreateSprint = () => {
                         if (val?._id === sprint?._id) {
                           return {
                             ...val,
-                            [filed]: newValue
-                          }
+                            [filed]: newValue,
+                          };
+                        } else {
+                          return val;
                         }
-                        else {
-                          return val
-                        }
-                      })
-                    }
-                  })
+                      }),
+                    };
+                  });
                 }}
-
                 onUpdateTime={(startDate, endDate) => {
                   // calling the updated sprint api
-                  UpdateSprint({ startDate, endDate })
+                  UpdateSprint({ startDate, endDate });
                 }}
               />
             );
@@ -372,35 +368,37 @@ const CreateSprint = () => {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={dropOnBacklogs && dropOnBacklogs}
               >
-
-                {BackLogsInfo?.backlogs?.tasks?.length !== 0 ? BackLogsInfo?.backlogs?.tasks?.map((ele, index) => {
-                  // mapping all the tasks
-                  return (
-                    <Task
-                      key={index}
-                      val={ele?.title}
-                      user={ele?.author?.name}
-                      OnEdit={() => {
-                        setTaskIdToUpdate(ele?._id);
-                      }}
-                      OnEditSave={(val) => onSaveTask(val)}
-                      inputUpdate={(newVal) => onUpdatetask(newVal)}
-                      TaskAuthorId={
-                        ele?.author?._id ||
-                        JSON.parse(localStorage.getItem("user"))._id
-                      }
-                      onDelete={() => {
-                        // set the state to store the Delete Id
-                        settaskIdToDelete(ele?._id);
-                        setShowDeletePopup(true);
-                      }}
-                      onDragStart={() => OnDragStart(ele)}
-                    />
-                  );
-                }) :
-                  <h1 className="font-semibold text-xl text-gray-400">No Task  Has Created</h1>
-                }
-
+                {BackLogsInfo?.backlogs?.tasks?.length !== 0 ? (
+                  BackLogsInfo?.backlogs?.tasks?.map((ele, index) => {
+                    // mapping all the tasks
+                    return (
+                      <Task
+                        key={index}
+                        val={ele?.title}
+                        user={ele?.author?.name}
+                        OnEdit={() => {
+                          setTaskIdToUpdate(ele?._id);
+                        }}
+                        OnEditSave={(val) => onSaveTask(val)}
+                        inputUpdate={(newVal) => onUpdatetask(newVal)}
+                        TaskAuthorId={
+                          ele?.author?._id ||
+                          JSON.parse(localStorage.getItem("user"))._id
+                        }
+                        onDelete={() => {
+                          // set the state to store the Delete Id
+                          settaskIdToDelete(ele?._id);
+                          setShowDeletePopup(true);
+                        }}
+                        onDragStart={() => OnDragStart(ele)}
+                      />
+                    );
+                  })
+                ) : (
+                  <h1 className="font-semibold text-xl text-gray-400">
+                    No Task Has Created
+                  </h1>
+                )}
               </div>
               {/*  */}
               <div className="mt-4">

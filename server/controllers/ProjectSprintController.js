@@ -1,38 +1,57 @@
-import ProjectSprintService from "../services/ProjectSprintService.js"
+import ProjectSprintService from "../services/ProjectSprintService.js";
+import UpdateActivities from "../Utility/UpdateActivities.js";
 
 class ProjectSprintController {
-    // get project sprint information
-    async getProjectSprintController(req, res) {
-        const { sprintId } = req.params
-        try {
-            let projectSprints = await ProjectSprintService.getSprintInfoService({ sprintId })
+  async getProjectSprintsController(req, res) {
+    const { projectId } = req.params;
+    try {
+      let sprints = await ProjectSprintService.getProjectSprintInfo({
+        projectId,
+      });
 
-            if (projectSprints) {
-                return res.status(projectSprints.status).json({
-                    message: projectSprints.message,
-                    sprintInfo: projectSprints.sprints
-                })
-            }
-        } catch (error) {
-            return res.status(200).json({ message: error.message })
-        }
+      if (sprints) {
+        return res
+          .status(sprints.status)
+          .json({ message: sprints.message, sprints: sprints?.sprintInfo });
+      } else {
+        return res.status(200).json({ message: "Sprint not found" });
+      }
+    } catch (error) {
+      return res.json({ message });
     }
+  }
 
-    //get all project Sprints
+  // create new Project Service
+  async createNewSubTaskTaskController(req, res) {
+    try {
+      let authorId = req.userId;
+      let { projectId, TaskId } = req.params;
+      let { title } = req.body;
 
-    async getAllProjectSprints(req, res) {
-        try {
-            let { projectId } = req.params
+      let newSubTask = await ProjectSprintService.createNewSubTaskTaskService({
+        authorId,
+        title,
+        TaskId,
+        projectId,
+      });
 
-            let allProjects = await ProjectSprintService.getAllSprint({ projectId })
-            if (allProjects) {
-                return res.status(allProjects.status).json({ message: allProjects.message, allSprints: allProjects.allSprints })
-            }
-        } catch (error) {
+      if (newSubTask.status === 200) {
+        // creating the activity
+        await UpdateActivities({
+          name: authorId,
+          action: "Created",
+          task: `new SubTask  ${title}`,
+          createdTaskId: projectId,
+        });
 
-        }
+        return res
+          .status(newSubTask?.status)
+          .json({ message: newSubTask.message });
+      }
+    } catch (error) {
+      return res.json({ message });
     }
-
+  }
 }
 
-export default new ProjectSprintController
+export default new ProjectSprintController();

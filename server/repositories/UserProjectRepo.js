@@ -113,11 +113,14 @@ class UserProjectRepo {
   // start sprint repo
   async StartSprintRepo(sprintId) {
     try {
-      return await SprintModel.updateOne({ _id: sprintId }, {
-        $set: {
-          isStarted: true
+      return await SprintModel.updateOne(
+        { _id: sprintId },
+        {
+          $set: {
+            isStarted: true,
+          },
         }
-      })
+      );
     } catch (error) {
       console.log("error  while starting  Sprint");
     }
@@ -126,11 +129,14 @@ class UserProjectRepo {
   async removeTaskFromSprint({ Task, sprintId }) {
     try {
       // Update task statuses in parallel
-      let updateTask = await TaskModel.updateOne({ _id: Task }, {
-        $set: {
-          IsInSprint: false
+      let updateTask = await TaskModel.updateOne(
+        { _id: Task },
+        {
+          $set: {
+            IsInSprint: false,
+          },
         }
-      });
+      );
 
       // Remove tasks from the sprint
 
@@ -143,7 +149,7 @@ class UserProjectRepo {
         }
       );
 
-      return updateSprint
+      return updateSprint;
     } catch (error) {
       console.log("error while removing the task from the sprint"); //error
     }
@@ -174,13 +180,16 @@ class UserProjectRepo {
   //get all avaialble  project sprint
   async getSprint(projectId, isStarted = false, isCompleted = false) {
     try {
-      return await SprintModel.find({
-        $and: [
-          { project: projectId },
-          { isStarted: isStarted },
-          { isCompleted: isCompleted },
-        ],
-      }, "name startDate endDate project Tasks isCompleted isStarted").populate({
+      return await SprintModel.find(
+        {
+          $and: [
+            { project: projectId },
+            { isStarted: isStarted },
+            { isCompleted: isCompleted },
+          ],
+        },
+        "name startDate endDate project Tasks isCompleted isStarted"
+      ).populate({
         path: "Tasks",
         model: "task",
         select: "title author IsInSprint",

@@ -13,7 +13,7 @@ const Task = ({
   TaskAuthorId,
   onDelete,
   onDragStart,
-  onDragEnd
+  onDragEnd,
 }) => {
   const [isEdit, setIsEdit] = useState(false);
 
@@ -26,14 +26,12 @@ const Task = ({
   useEffect(() => {
     // when component loads store the data
     setOldData(val);
-    console.log(TaskAuthorId);
   }, []);
   useEffect(() => {
     //update the input value
     if (inputUpdate) {
       inputUpdate(InputVal);
     }
-
   }, [InputVal]);
   return (
     <>
@@ -70,6 +68,7 @@ const Task = ({
                   // sends the save Data to parent
 
                   val !== oldData && OnEditSave(val);
+
                   // and set Old data to saved data
                   setOldData(val);
                 }}
@@ -78,11 +77,16 @@ const Task = ({
           </div>
         </div>
       ) : (
-        <div className="w-full grid grid-cols-4 border rounded-md p-2 items-center bg-slate-100 cursor-move " draggable onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <div
+          className="w-full grid grid-cols-4 border rounded-md p-2 items-center bg-slate-100 cursor-move "
+          draggable
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
           <div className="col-span-3 flex h-full items-center pl-4">
             <CustomAvator user={user} />
             <div className="w-full flex items-center h-10">
-              {isEditCancel ? oldData : val}
+              {isEditCancel ? val : oldData}
             </div>
           </div>
           {JSON.parse(localStorage.getItem("user"))._id == TaskAuthorId && (
@@ -103,7 +107,6 @@ const Task = ({
               />
             </div>
           )}
-
         </div>
       )}
     </>

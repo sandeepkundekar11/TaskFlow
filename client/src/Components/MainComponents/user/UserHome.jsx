@@ -15,7 +15,11 @@ import { useNavigate } from "react-router-dom";
 
 const UserHome = () => {
   const navigate = useNavigate();
-  const [activity, setActivity] = useState([]);
+  // stores the user activities
+  const [activities, setActivities] = useState([]);
+  // pagination object
+  const [Pagination, setPagination] = useState({ start: 0, end: 6 })
+  // stores all User Projects
   const [userAllProject, setUserAllProjects] = useState([]);
   // calling the get all project Api
   const {
@@ -24,11 +28,9 @@ const UserHome = () => {
     callApi: getAllProjects,
   } = useGetApi(`${BASE_URL}/user/projects`);
 
-  useEffect(() => {
-    getAllProjects();
-  }, []);
 
   useEffect(() => {
+    // updating the project
     let updatedProjects = allProjects?.projects?.map((project) => {
       return {
         ...project,
@@ -39,77 +41,38 @@ const UserHome = () => {
     setUserAllProjects(updatedProjects);
   }, [allProjects]);
 
-  const activitis = [
-    {
-      id: "1",
-      user: "John Doe",
-      action: "created",
-      task: "Implement user authentication",
-      timestamp: "2023-05-10T09:00:00Z",
-    },
-    {
-      id: "2",
-      user: "Jane Smith",
-      action: "commented",
-      task: "Design new landing page",
-      timestamp: "2023-05-10T10:30:00Z",
-    },
-    {
-      id: "3",
-      user: "Mike Johnson",
-      action: "updated",
-      task: "Fix bug in payment gateway",
-      timestamp: "2023-05-10T11:45:00Z",
-    },
-    {
-      id: "4",
-      user: "Sarah Williams",
-      action: "completed",
-      task: "Write API documentation",
-      timestamp: "2023-05-10T14:15:00Z",
-    },
-    {
-      id: "5",
-      user: "John Doe",
-      action: "assigned",
-      task: "Optimize database queries",
-      timestamp: "2023-05-10T16:00:00Z",
-    },
-    {
-      id: "3",
-      user: "Mike Johnson",
-      action: "updated",
-      task: "Fix bug in payment gateway",
-      timestamp: "2023-05-10T11:45:00Z",
-    },
-    {
-      id: "4",
-      user: "Sarah Williams",
-      action: "completed",
-      task: "Write API documentation",
-      timestamp: "2023-05-10T14:15:00Z",
-    },
-    {
-      id: "5",
-      user: "John Doe",
-      action: "assigned",
-      task: "Optimize database queries",
-      timestamp: "2023-05-10T16:00:00Z",
-    },
-  ];
 
+  // calling the get user activity api
+  const { callApi: getAllUserActivity, data: allUserActivity } = useGetApi(`${BASE_URL}/user/userActivities?start=${Pagination?.start}&&endLimit=${Pagination?.end}`)
   useEffect(() => {
-    setActivity(activitis.slice(0, 5));
+    getAllProjects();
+    getAllUserActivity()
   }, []);
+  useEffect(() => {
+    // update user Activity
 
-  //   expands the activities section
-  const ExpandActivity = () => {
-    // here we will be calling api
-    let count = activity.length;
-    if (activity.length < activitis.length) {
-      setActivity(activitis.slice(0, count + 5));
-    }
-  };
+    if (allUserActivity?.activities)
+      setActivities((prev) => {
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        return [...prev, ...allUserActivity?.activities]
+      })
+  }, [allUserActivity])
+
+
+  // see more functionality
+  const seeMoreTasks = () => {
+    setPagination((prev) => {
+      return {
+        ...prev,
+        start: prev.start + 6,
+        end: prev.end + 6
+      }
+    })
+
+    getAllUserActivity()
+  }
+
+
   return (
     <div className="w-screen h-screen bg-slate-50 overflow-x-hidden">
       <div className=" h-auto pt-20 grid md:grid-cols-8 grid-cols-5 w-[95%] m-auto md:space-x-4 ">
@@ -150,14 +113,14 @@ const UserHome = () => {
           </CardHeader>
           <CardContent className="">
             {/* mapping the user activity */}
-            {activity.map((activity) => {
-              return <ActivityFeedCard key={activity.id} activity={activity} />;
+            {activities?.map((activity) => {
+              return <ActivityFeedCard key={activity?._id} activity={activity} />;
             })}
           </CardContent>
           <CardFooter>
             <Button
               className="w-full h-10 bg-slate-200 hover:bg-slate-300 text-lg text-black rounded-md"
-              onClick={ExpandActivity}
+              onClick={seeMoreTasks}
             >
               see more..
             </Button>

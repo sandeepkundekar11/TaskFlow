@@ -92,5 +92,19 @@ class ProjectSprintRepo {
       console.log("error while get  project info");
     }
   }
+
+
+  //update subTask
+  async updateSubTask({ subTaskId, Taskstatus }) {
+    try {
+      return await SubTaskModel.updateOne({ _id: subTaskId }, {
+        $set: {
+          status: Taskstatus
+        }
+      })
+    } catch (error) {
+      console.log("error updating the subTask");
+    }
+  }
 }
 export default new ProjectSprintRepo();

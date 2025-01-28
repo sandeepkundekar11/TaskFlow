@@ -67,7 +67,42 @@ class ProjectSprintController {
         })
       }
     } catch (error) {
-      return res.json({ message: error.message });
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+
+  // update the subtask
+
+  async updateSubTask(req, res) {
+    try {
+
+      let { Taskstatus, title } = req.body;
+
+      if (!Taskstatus || !title) {
+        return res.status(404).json({ message: "provide all information" })
+      }
+      let { subTaskId, projectId } = req.params
+      let authorId = req.userId
+      let updatedSubtask = await ProjectSprintService.updateSubtaskService({ subTaskId, Taskstatus })
+
+      if (updatedSubtask.status === 200) {
+        // now updating the activity
+      
+        // creating the activity
+        await UpdateActivities({
+          name: authorId,
+          action: "Updated",
+          task: ` SubTask  ${title} to ${Taskstatus?.toLocaleUpperCase()}`,
+          createdTaskId: projectId,
+        });
+        return res.status(updatedSubtask?.status).json({ message: updatedSubtask?.message })
+      }
+      else {
+        return res.status(updatedSubtask?.status).json({ message: updatedSubtask?.message })
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   }
 }

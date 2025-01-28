@@ -3,6 +3,7 @@ import ProjectSprintController from "../controllers/ProjectSprintController.js";
 import userController from "../controllers/userController.js";
 import UserProjectController from "../controllers/UserProjectController.js";
 import userAuth from "../middlerwares/userAuth.js";
+import activitiesLogsController from "../controllers/activitiesLogsController.js";
 
 const UserRouter = express.Router();
 
@@ -80,8 +81,19 @@ UserRouter.post(
   ProjectSprintController.createNewSubTaskTaskController
 );
 
-
 // get project and completed sprint Info
-UserRouter.get("/projectAndCompletedSprint/:projectId", userAuth, ProjectSprintController.getProjectInfoController)
+UserRouter.get(
+  "/projectAndCompletedSprint/:projectId",
+  userAuth,
+  ProjectSprintController.getProjectInfoController
+);
+
+// get user activity logs
+//  start, endLimit query parameter
+UserRouter.get(
+  "/userActivities",
+  userAuth,
+  activitiesLogsController.getUserActivitiesLogs
+);
 
 export default UserRouter;

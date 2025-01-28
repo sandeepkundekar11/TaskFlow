@@ -21,5 +21,7 @@ const ActivitySchema = new Schema({
   },
 });
 
+ActivitySchema.index({ name: 1 });
+
 const ActivityModel = model("activity", ActivitySchema);
 export default ActivityModel;

@@ -338,6 +338,16 @@ const CreateSprint = () => {
                   // calling the updated sprint api
                   UpdateSprint({ startDate, endDate });
                 }}
+                onSprintStart={(message) => {
+                  if (message === "sprint has started") {
+                    setBacklogsInfo((prev) => {
+                      return {
+                        ...prev,
+                        sprint: [],
+                      };
+                    });
+                  }
+                }}
               />
             );
           })}

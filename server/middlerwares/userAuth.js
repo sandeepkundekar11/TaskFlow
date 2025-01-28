@@ -17,6 +17,7 @@ const userAuth = AsyncHandler(async (req, res, next) => {
     req.userId = decodeInfo?.user?._id;
     req.userEmail = decodeInfo?.user?.email;
     req.userName = decodeInfo?.user?.name;
+    req.CompanyId = decodeInfo?.user?.company;
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });

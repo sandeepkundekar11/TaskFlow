@@ -1,9 +1,9 @@
 import express from "express";
+import activitiesLogsController from "../controllers/activitiesLogsController.js";
 import ProjectSprintController from "../controllers/ProjectSprintController.js";
 import userController from "../controllers/userController.js";
 import UserProjectController from "../controllers/UserProjectController.js";
 import userAuth from "../middlerwares/userAuth.js";
-import activitiesLogsController from "../controllers/activitiesLogsController.js";
 
 const UserRouter = express.Router();
 
@@ -95,5 +95,12 @@ UserRouter.get(
   userAuth,
   activitiesLogsController.getUserActivitiesLogs
 );
+
+// update the subtask
+UserRouter.put(
+  "/updateSubTask/:projectId/:subTaskId",
+  userAuth,
+  ProjectSprintController.updateSubTask
+)
 
 export default UserRouter;

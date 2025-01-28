@@ -19,7 +19,7 @@ class ActivityLogRepo {
           model: "user",
           select: "name",
         })
-        .sort({ _id: 1 })
+        .sort({ _id: -1 })
         .skip(start)
         .limit(endLimit)
         .exec();

@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserHome = () => {
+  
   const navigate = useNavigate();
   // stores the user activities
   const [activities, setActivities] = useState([]);

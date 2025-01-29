@@ -35,10 +35,11 @@ const DashbaordChart = ({ data }) => {
         </Pie>
         <Tooltip />
         <Legend
+        className=""
           iconSize={20}
           layout="vertical"
           verticalAlign="middle"
-          align="center"
+          align="right"
         />
       </PieChart>
     </ResponsiveContainer>

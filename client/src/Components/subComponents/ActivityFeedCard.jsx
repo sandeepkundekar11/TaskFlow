@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Clock, Edit, Trash2 } from "lucide-react";
+import TimeUtililty from "../Utilities/TimeUtility";
 const ActivityFeedCard = ({ activity }) => {
+
+  const { updateTime } = TimeUtililty()
   const getActionIcon = (action) => {
     switch (action) {
       case "Created":
@@ -36,7 +39,7 @@ const ActivityFeedCard = ({ activity }) => {
     <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow mt-2">
       <div className="flex-shrink-0">{getActionIcon(activity?.action)}</div>
       <div className="flex-grow">
-        <p className="text-sm font-medium text-gray-900 flex">
+        <p className="text-sm font-medium text-gray-900 flex flex-wrap">
           <div className="pr-2 font-medium w-14 text-blue-600">
             {activity?.TaskId}
           </div>
@@ -45,7 +48,7 @@ const ActivityFeedCard = ({ activity }) => {
           the task
           {getTasks(activity?.action, activity?.task)}
         </p>
-        <p className="text-xs text-gray-500">{activity?.timeStamp}</p>
+        <p className="text-xs text-gray-500">{updateTime(activity?.timeStamp)}</p>
       </div>
     </div>
   );

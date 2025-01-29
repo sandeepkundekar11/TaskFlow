@@ -13,11 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
-  PaginationPrevious,
+  PaginationPrevious
 } from "@/components/ui/pagination";
 import { CiFilter, CiSearch } from "react-icons/ci";
 import { MdOutlineArrowDropDown } from "react-icons/md";
@@ -25,9 +24,16 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import AdminLog from "@/Components/subComponents/AdminLog";
 import { Input } from "@/components/ui/input";
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const ViewProject = () => {
   const Navigate = useNavigate();
+
+
+  const [Pagination, setPagination] = useState({
+    start: 0,
+    end: 7
+  })
   return (
     <div className="w-screen h-screen bg-slate-50 p-4 overflow-x-hidden">
       <div className="w-11/12 m-auto">

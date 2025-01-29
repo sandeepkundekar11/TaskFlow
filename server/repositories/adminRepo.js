@@ -102,6 +102,32 @@ class AdminReppsitory {
       console.log("error while getting the  activities of company users ");
     }
   }
+
+
+  // getting the project info
+  async getProjectInfoRepo({ projectId }) {
+    try {
+      return await ProjectModel.findOne({ _id: projectId }, "name description startTime status users")
+    } catch (error) {
+      console.log("error while getting the project info");
+    }
+  }
+
+  // getting the project Activity
+  async projectActivities({ userIds, start, end }) {
+    try {
+      return await ActivityModel.find({ name: { $in: userIds } }).populate({
+        path: "name",
+        model: "user",
+        select: "name"
+      }).sort({ _id: -1 })
+        .skip(start)
+        .limit(end)
+        .exec()
+    } catch (error) {
+      console.log("error while getting the project user activities");
+    }
+  }
 }
 
 export default new AdminReppsitory();

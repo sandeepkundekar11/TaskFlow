@@ -48,4 +48,12 @@ adminRouter.get(
   userAuth,
   AdminProjectController.getAllProjects
 );
+
+//get dashboard
+
+adminRouter.get(
+  "/dashboard",
+  userAuth,
+  adminController.getDashboardDataController
+);
 export default adminRouter;

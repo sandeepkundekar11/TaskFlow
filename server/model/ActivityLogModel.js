@@ -17,7 +17,7 @@ const ActivitySchema = new Schema({
   },
   timeStamp: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

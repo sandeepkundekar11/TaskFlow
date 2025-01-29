@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import AdminReppsitory from "../repositories/adminRepo.js";
+import ActivityModel from "../model/ActivityLogModel.js";
+import { default as adminRepo, default as AdminReppsitory } from "../repositories/adminRepo.js";
 import MailSender from "../Utility/MailSender.js";
-import adminRepo from "../repositories/adminRepo.js";
 class AdminService {
   // signup service
   async SignupAdmin(info) {
@@ -169,6 +169,31 @@ class AdminService {
             userActivites,
           },
         };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // view Project service
+
+  async ViewProjectService({ projectId, start, end }) {
+    try {
+      let projectInfo = await adminRepo.getProjectInfoRepo({ projectId })
+      let userIds = projectInfo.users
+      // getting activities logs
+      let activities = await adminRepo.projectActivities({ userIds, start, end })
+      let activityCount = await ActivityModel.find({ name: { $in: userIds } }).countDocuments()
+      if (projectInfo && activities) {
+        return {
+          status: 200,
+          projectInfo: projectInfo,
+          activities: activities,
+          activityCount:activityCount
+        }
       }
     } catch (error) {
       return {

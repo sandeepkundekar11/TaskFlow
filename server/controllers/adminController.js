@@ -78,5 +78,21 @@ class AdminController {
       return res.status(500).json({ message: error.message });
     }
   }
+
+  // get dashboard data
+
+  async getDashboardDataController(req, res) {
+    let companyId = req.userId;
+    try {
+      let dashBoard = await adminService.getDashboardData({ companyId });
+      if (dashBoard) {
+        return res.status(dashBoard.status).json({
+          dashboard: dashBoard.dashboard,
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 }
 export default new AdminController();

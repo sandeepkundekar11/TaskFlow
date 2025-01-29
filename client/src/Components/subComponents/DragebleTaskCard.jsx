@@ -30,6 +30,18 @@ const DrgableTaskCard = ({
               TODO
             </p>
           )}
+
+          {type === "inprogress" && (
+            <p className="text-sm w-24 font-medium bg-yellow-300 rounded-md p-1">
+              INPROGRESS
+            </p>
+          )}
+
+          {type === "completed" && (
+            <p className="text-sm w-24 font-medium bg-green-300 rounded-md p-1">
+              COMPLETED
+            </p>
+          )}
         </div>
         <Avatar className="col-span-1">
           <AvatarFallback className="bg-blue-100">{InitialName}</AvatarFallback>

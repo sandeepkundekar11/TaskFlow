@@ -11,6 +11,7 @@ import AvatarGroup from "./AvatarGroup";
 import CustomTaskAccordian from "./CustomAccordian";
 import DrgableTaskCard from "./DragebleTaskCard";
 import EmptySprintLoader from "../loaders/EmptySprintLoader";
+import usePutApi from "@/CustomHooks/usePutApi";
 
 const ProjectStatus = () => {
   // based on this State we are showing and hidding the Add SubTask Popup
@@ -50,7 +51,8 @@ const ProjectStatus = () => {
   }, [currenrSprintData]);
 
   // logic
-  const { updateCurrentSprintAndAddSubTask } = SprintSubTaskUtililty();
+  const { updateCurrentSprintAndAddSubTask, UpdateTheSubTask } =
+    SprintSubTaskUtililty();
 
   // stores the selected Task id in which we will be creating the subtasks
   const [selectedTaskId, setSelectedTaskId] = useState(null);
@@ -94,6 +96,57 @@ const ProjectStatus = () => {
   const onAddSubTask = () => {
     addSubTask({ title: SubTask });
   };
+
+  const [subTaskId, setSubtaskId] = useState();
+  // calling the update subTask Api
+  const { callApi: updateSubTaskStatus } = usePutApi(
+    `${BASE_URL}/user/updateSubTask/${projectId}/${subTaskId}`
+  );
+  // task update
+  const [draggedData, setDraggedData] = useState({ taskId: "", data: "" });
+
+  // this function will get call when we start dragging the todo subtask
+  const onTodoDragStart = (TaskId, data) => {
+    console.log("drag started from todo");
+    setDraggedData({ taskId: TaskId, data: data });
+  };
+
+  // this function gets call when we drop subTask on InProgress
+  const DropOnInProgress = () => {
+    // // calling api to keeping the task inprogress
+    updateSubTaskStatus({
+      Taskstatus: "inprogress",
+      title: draggedData?.data?.title,
+    });
+    // update the currentSprintinfo
+    setCurrentSprintInfo((prev) =>
+      UpdateTheSubTask(prev, draggedData, "inprogress")
+    );
+
+    setDraggedData({ taskId: "", data: "" });
+  };
+
+  // this function will get call when we start dragging the In Progress subtask
+  const onInProgressDragStart = (TaskId, data) => {
+    console.log("drag started from inprogress");
+    setDraggedData({ taskId: TaskId, data: data });
+  };
+
+  // this function gets call when we drop subTask on InProgress
+  const dropOnCompleted = () => {
+    // // calling api to complete the Subtask
+    updateSubTaskStatus({
+      Taskstatus: "completed",
+      title: draggedData?.data?.title,
+    });
+    // update the currentSprintinfo
+    setCurrentSprintInfo((prev) =>
+      UpdateTheSubTask(prev, draggedData, "completed")
+    );
+
+    setDraggedData({ taskId: "", data: "" });
+  };
+
   return (
     <div className="w-[95%] p-4 overflow-x-hidden">
       <h1 className="text-2xl font-semibold">
@@ -197,6 +250,11 @@ const ProjectStatus = () => {
                                     Author={item?.author?.name}
                                     title={item?.title}
                                     type={item?.status}
+                                    onDragStartFun={() => {
+                                      onTodoDragStart(task?._id, item);
+                                      // setting the subtask id
+                                      setSubtaskId(item?._id);
+                                    }}
                                   />
                                 );
                               }
@@ -204,19 +262,50 @@ const ProjectStatus = () => {
                           </div>
 
                           {/* inProgress part */}
-                          <div className="col-span-1 min-h-96 bg-gray-200">
+                          <div
+                            className="col-span-1 min-h-96 bg-gray-200"
+                            onDrop={DropOnInProgress}
+                            onDragOver={(e) => e.preventDefault()}
+                          >
                             {/* here all in progress Task will come */}
-                            {/* {task?.subTasks?.map((item) => {
-                      return <DrgableTaskCard Task={item} key={item} />;
-                    })} */}
+                            {task?.subTasks?.map((item, index) => {
+                              if (item?.status === "inprogress") {
+                                return (
+                                  <DrgableTaskCard
+                                    key={index}
+                                    Author={item?.author?.name}
+                                    title={item?.title}
+                                    type={item?.status}
+                                    onDragStartFun={() => {
+                                      onInProgressDragStart(task?._id, item);
+                                      // setting the subtask id
+                                      setSubtaskId(item?._id);
+                                    }}
+                                  />
+                                );
+                              }
+                            })}
                           </div>
 
                           {/* done part */}
-                          <div className="col-span-1 min-h-96 bg-gray-200">
+                          <div
+                            className="col-span-1 min-h-96 bg-gray-200"
+                            onDrop={dropOnCompleted}
+                            onDragOver={(e) => e.preventDefault()}
+                          >
                             {/* here all done Task will come */}
-                            {/* {task?.subTasks?.map((task) => {
-                      return <DrgableTaskCard Task={task} key={task} />;
-                    })} */}
+                            {task?.subTasks?.map((item, index) => {
+                              if (item?.status === "completed") {
+                                return (
+                                  <DrgableTaskCard
+                                    key={index}
+                                    Author={item?.author?.name}
+                                    title={item?.title}
+                                    type={item?.status}
+                                  />
+                                );
+                              }
+                            })}
                           </div>
                         </div>
                       </CustomTaskAccordian>

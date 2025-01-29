@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import AdminReppsitory from "../repositories/adminRepo.js";
 import MailSender from "../Utility/MailSender.js";
+import adminRepo from "../repositories/adminRepo.js";
 class AdminService {
   // signup service
   async SignupAdmin(info) {
@@ -40,7 +41,10 @@ class AdminService {
       }
 
       let token = jwt.sign({ user: userExist }, process.env.JWT_SECRET);
-      let checkPassword = await bcrypt.compare(info.password, userExist.password);
+      let checkPassword = await bcrypt.compare(
+        info.password,
+        userExist.password
+      );
       if (!checkPassword) {
         return {
           status: 401,
@@ -102,6 +106,69 @@ class AdminService {
             message: "User added and Initation is Been send",
           };
         }
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // get dashBoard data
+
+  async getDashboardData({ companyId }) {
+    try {
+      // getting the all projects of company
+      let allProject = await adminRepo.adminGetProject({ companyId });
+
+      // getting all users of company
+      let allUsers = await adminRepo.adminGetAllUsersOfCompany({ companyId });
+
+      let userIds = allUsers.map((user) => user._id);
+      // gettting all tasks of company
+      let allTask = await adminRepo.adminGetAlTaskOfCompany({ userIds });
+
+      // getting all Subtask of company
+      let allSubTask = await adminRepo.adminGetAllSubataskOfCompany({
+        userIds,
+      });
+
+      // getting chart data
+      let chartData = [
+        {
+          name: "TODO",
+          value: allSubTask.filter((subtask) => subtask.status === "todo")
+            .length,
+        },
+        {
+          name: "INPROGRESS",
+          value: allSubTask.filter((subtask) => subtask.status === "inProgress")
+            .length,
+        },
+        {
+          name: "COMPLETED",
+          value: allSubTask.filter((subtask) => subtask.status === "completed")
+            .length,
+        },
+      ];
+
+      // getting latest 4 activities
+
+      let userActivites = await adminRepo.getLatestActivities({ userIds });
+
+      if (allProject && allUsers && allTask && allSubTask) {
+        return {
+          status: 200,
+          dashboard: {
+            totalProject: allProject.length,
+            totalUsers: allUsers.length,
+            totalTask: allTask.length,
+            totalSubtask: allSubTask.length,
+            chartData,
+            userActivites,
+          },
+        };
       }
     } catch (error) {
       return {

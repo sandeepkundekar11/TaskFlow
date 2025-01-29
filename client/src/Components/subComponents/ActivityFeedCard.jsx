@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { Clock, Edit, Trash2 } from "lucide-react";
-
 const ActivityFeedCard = ({ activity }) => {
   const getActionIcon = (action) => {
     switch (action) {
@@ -10,9 +9,27 @@ const ActivityFeedCard = ({ activity }) => {
       case "Updated":
         return <Edit className="w-6 h-6 text-yellow-500" />;
       case "Deleted":
-        return <Trash2 className="w-6 h-6 text-red-500" />
+        return <Trash2 className="w-6 h-6 text-red-500" />;
       default:
         return <Clock className="w-6 h-6 text-gray-500" />;
+    }
+  };
+
+  const getTasks = (action, task) => {
+    switch (action) {
+      case "Created":
+        return (
+          <span className="bg-blue-200 pl-1 pr-1 rounded-lg ">{task}</span>
+        );
+
+      case "Updated":
+        return (
+          <span className="bg-green-200 pl-1 pr-1 rounded-lg ">{task}</span>
+        );
+      case "Deleted":
+        return <span className="bg-red-200 pl-1 pr-1 rounded-lg ">{task}</span>;
+      default:
+        return <span className="bg-blue-300  rounded-lg">{task}</span>;
     }
   };
   return (
@@ -20,7 +37,13 @@ const ActivityFeedCard = ({ activity }) => {
       <div className="flex-shrink-0">{getActionIcon(activity?.action)}</div>
       <div className="flex-grow">
         <p className="text-sm font-medium text-gray-900 flex">
-          <div className="pr-2 font-medium w-14 text-blue-600">{activity?.TaskId}</div>{activity?.name?.name} {activity?.action} the task {activity?.task}
+          <div className="pr-2 font-medium w-14 text-blue-600">
+            {activity?.TaskId}
+          </div>
+          {activity?.name?.name}
+          <span className="pl-1 font-extrabold pr-1">{activity?.action}</span>
+          the task
+          {getTasks(activity?.action, activity?.task)}
         </p>
         <p className="text-xs text-gray-500">{activity?.timeStamp}</p>
       </div>

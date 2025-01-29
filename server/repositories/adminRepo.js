@@ -1,4 +1,8 @@
+import ActivityModel from "../model/ActivityLogModel.js";
 import AdministratorModel from "../model/AdministratorModel.js";
+import ProjectModel from "../model/ProjectModel.js";
+import SubTaskModel from "../model/SubTasksModel.js";
+import TaskModel from "../model/TaskModel.js";
 import UserModel from "../model/UserModel.js";
 
 class AdminReppsitory {
@@ -38,6 +42,64 @@ class AdminReppsitory {
     } catch (error) {
       console.log("error occured while creating new user in to the company");
       throw error;
+    }
+  }
+
+  // get the all project of the Company
+  async adminGetProject({ companyId }) {
+    try {
+      return await ProjectModel.find({ company: companyId });
+    } catch (error) {
+      console.log("error while getting the all projects of company");
+    }
+  }
+
+  // get the all Users of the company
+  async adminGetAllUsersOfCompany({ companyId }) {
+    try {
+      return await UserModel.find({ company: companyId });
+    } catch (error) {
+      console.log("error while getting the all users of company");
+    }
+  }
+
+  // get the alll tasks of the company
+  async adminGetAlTaskOfCompany({ userIds }) {
+    try {
+      return await TaskModel.find({ author: { $in: userIds } });
+    } catch (error) {
+      console.log("error while getting the all task of company");
+    }
+  }
+
+  // get all subTask of the Company
+  async adminGetAllSubataskOfCompany({ userIds }) {
+    try {
+      return await SubTaskModel.find({ author: { $in: userIds } });
+    } catch (error) {
+      console.log("error while getting the all subtasks of company");
+    }
+  }
+
+  // get latest activitis
+  async getLatestActivities({ userIds }) {
+    try {
+      return await ActivityModel.find({
+        name: {
+          $in: userIds,
+        },
+      })
+        .populate({
+          path: "name",
+          model: "user",
+          select: "name",
+        })
+        .sort({ _id: -1 })
+        .skip(0)
+        .limit(4)
+        .exec();
+    } catch (error) {
+      console.log("error while getting the  activities of company users ");
     }
   }
 }

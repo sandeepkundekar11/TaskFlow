@@ -103,27 +103,47 @@ class AdminReppsitory {
     }
   }
 
-
   // getting the project info
   async getProjectInfoRepo({ projectId }) {
     try {
-      return await ProjectModel.findOne({ _id: projectId }, "name description startTime status users")
+      return await ProjectModel.findOne(
+        { _id: projectId },
+        "name description startTime status users"
+      ).populate({
+        path: "users",
+        model: "user",
+        select: "company",
+      });
     } catch (error) {
       console.log("error while getting the project info");
     }
   }
 
   // getting the project Activity
-  async projectActivities({ userIds, start, end }) {
+  async projectActivities({ userIds, start, limit, projectname }) {
+    const getProjectInitials = (projectName) => {
+      return projectName
+        .split(" ") // Split by spaces
+        .map((word) => word[0].toUpperCase()) // Take the first letter of each word
+        .join(""); // Combine into initials
+    };
     try {
-      return await ActivityModel.find({ name: { $in: userIds } }).populate({
-        path: "name",
-        model: "user",
-        select: "name"
-      }).sort({ _id: -1 })
+      return await ActivityModel.find({
+        name: { $in: userIds },
+        TaskId: {
+          $regex: getProjectInitials(projectname),
+          $options: "i",
+        },
+      })
+        .populate({
+          path: "name",
+          model: "user",
+          select: "name",
+        })
+        .sort({ _id: -1 })
         .skip(start)
-        .limit(end)
-        .exec()
+        .limit(limit)
+        .exec();
     } catch (error) {
       console.log("error while getting the project user activities");
     }

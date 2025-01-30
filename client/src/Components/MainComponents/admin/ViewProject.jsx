@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import { Button } from "@/Components/ui/button";
 import {
   Card,
@@ -13,10 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
-  PaginationPrevious
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { CiFilter, CiSearch } from "react-icons/ci";
 import { MdOutlineArrowDropDown } from "react-icons/md";
@@ -24,41 +26,72 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import AdminLog from "@/Components/subComponents/AdminLog";
 import { Input } from "@/components/ui/input";
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import useGetApi from "@/CustomHooks/useGetApi";
+import { BASE_URL } from "@/constants";
+import ActivitySkeleton from "@/Components/loaders/ActivitySkeleton";
 const ViewProject = () => {
   const Navigate = useNavigate();
 
-
-  const [Pagination, setPagination] = useState({
+  const [projectPagination, setProjectPagination] = useState({
     start: 0,
-    end: 7
-  })
+    end: 6,
+  });
+
+  // pages count
+  const [PageCountInfo, setPageCountInfo] = useState({
+    presentPage: 1,
+    totalPages: 1,
+  });
+
+  const { id } = useParams();
+  // calling the get
+
+  const [viewProjectInfo, setViewProjectInfo] = useState();
+  const [projectActivity, setProjectActivity] = useState([]);
+
+  //single page data
+
+  const {
+    callApi: getProjectInfo,
+    data: projectInfo,
+    loading: projectInfoLoading,
+  } = useGetApi(
+    `${BASE_URL}/admin/viewProject/${id}?start=${projectPagination.start}&&limit=${projectPagination?.end}`
+  );
+
   return (
     <div className="w-screen h-screen bg-slate-50 p-4 overflow-x-hidden">
       <div className="w-11/12 m-auto">
         <Card className="w-full h-auto rounded-md p-2 relative">
           <CardHeader>
             <CardTitle className="font-semibold text-3xl ">
-              Ems (Element Management System)
+              {viewProjectInfo?.name}
             </CardTitle>
           </CardHeader>
           <CardContent className="mt-2">
             <p className="text-lg text-gray-600">
-              This Project Manages the all Systems of the offices
+              {viewProjectInfo?.description}
             </p>
             <div className="flex  space-x-6 mt-3 ">
               <div className="flex space-x-2">
                 <p className=" font-semibold text-gray-700">Status :</p>
                 <p className="px-2 rounded-xl bg-green-300 text-green-900">
-                  {" "}
-                  Active
+                  {viewProjectInfo?.status}
                 </p>
               </div>
 
               <div className="flex space-x-2">
                 <p className=" font-semibold text-gray-700">Start Date :</p>
-                <p className="text-gray-500 "> January 15, 2023</p>
+                <p className="text-gray-500 flex space-x-1 ">
+                  <div>
+                    {new Date(viewProjectInfo?.startTime).toLocaleDateString()}
+                  </div>
+                  <div>
+                    {new Date(viewProjectInfo?.startTime).toLocaleTimeString()}
+                  </div>
+                </p>
               </div>
             </div>
           </CardContent>
@@ -116,21 +149,44 @@ const ViewProject = () => {
           </CardHeader>
 
           <CardContent className="h-[50vh] overflow-x-scroll border bg-slate-100 logcontainer">
-            {[1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12].map((ele) => {
-              return <AdminLog key={ele} />;
-            })}
+            {projectInfoLoading ? (
+              <ActivitySkeleton />
+            ) : (
+              <>
+                {projectActivity?.map((log, index) => {
+                  // Check if the current index falls within the pagination range
+                  if (
+                    index >= projectPagination.start &&
+                    index < projectPagination.end
+                  ) {
+                    return <AdminLog key={log.id || index} info={log} />; // Use unique key, log.id or index
+                  }
+                  return null; // Avoid rendering undefined elements
+                })}
+              </>
+            )}
           </CardContent>
 
           <CardFooter>
             <Pagination className="w-full">
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  {projectPagination.start !== 0 && (
+                    <PaginationPrevious
+                    // onClick={}
+                    />
+                  )}
                 </PaginationItem>
 
-                <p className="text-gray-800 font-semibold mx-20">Page 1 of 1</p>
+                <p className="text-gray-800 font-semibold mx-20">
+                  Page 1 of {PageCountInfo?.totalPages}
+                </p>
                 <PaginationItem>
-                  <PaginationNext href="#" />
+                  {projectPagination.end < projectInfo?.activityCount && (
+                    <PaginationNext
+                    // onClick={ }
+                    />
+                  )}
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

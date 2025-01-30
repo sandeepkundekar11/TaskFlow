@@ -142,7 +142,7 @@ class AdminReppsitory {
         })
         .sort({ _id: -1 })
         .skip(start)
-        .limit(limit)
+        .limit(limit-start)
         .exec();
     } catch (error) {
       console.log("error while getting the project user activities");

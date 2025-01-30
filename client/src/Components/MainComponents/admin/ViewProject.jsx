@@ -26,11 +26,11 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import AdminLog from "@/Components/subComponents/AdminLog";
 import { Input } from "@/components/ui/input";
 
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import ActivitySkeleton from "@/Components/loaders/ActivitySkeleton";
 import useGetApi from "@/CustomHooks/useGetApi";
 import { BASE_URL } from "@/constants";
-import ActivitySkeleton from "@/Components/loaders/ActivitySkeleton";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 const ViewProject = () => {
   const Navigate = useNavigate();
 
@@ -50,6 +50,8 @@ const ViewProject = () => {
 
   const [viewProjectInfo, setViewProjectInfo] = useState();
   const [projectActivity, setProjectActivity] = useState([]);
+  const [SearchedInfo, setSearchedInfo] = useState("")
+  const [DropdownFilter, setDropdownFilter] = useState("All")
 
   //single page data
 
@@ -61,6 +63,102 @@ const ViewProject = () => {
     `${BASE_URL}/admin/viewProject/${id}?start=${projectPagination.start}&&limit=${projectPagination?.end}`
   );
 
+
+  useEffect(() => {
+    // checks that whether data is present or not if data is not present then only call the api
+    const isDataAvailable = projectActivity.some((_, index) => index >= projectPagination.start && index < projectPagination.end);
+    if (!isDataAvailable) {
+      getProjectInfo()
+    }
+
+  }, [projectPagination])
+
+  useEffect(() => {
+    setViewProjectInfo(projectInfo?.projectInfo)
+
+    if (projectInfo?.activities) {
+      setProjectActivity((prev) => {
+        return [...prev, ...projectInfo?.activities]
+      })
+    }
+  }, [projectInfo])
+
+
+  useEffect(() => {
+    setPageCountInfo((prev) => {
+      return {
+        ...prev,
+        totalPages: Math.ceil(projectInfo?.activityCount / 6)
+      }
+    })
+
+  }, [projectActivity])
+
+
+  // going next page
+  const NextPage = () => {
+    setProjectPagination((prev) => {
+      return {
+        ...prev,
+        start: prev.end,
+        end: prev.end + 6
+      }
+    })
+
+    setPageCountInfo((prev) => {
+      return {
+        ...prev,
+        presentPage: prev.presentPage + 1
+      }
+    })
+  }
+
+
+  // coming to previous page
+  const PrevPage = () => {
+    setProjectPagination((prev) => {
+      return {
+        ...prev,
+        start: prev.start - 6,
+        end: prev.end - 6
+      }
+    })
+
+
+    setPageCountInfo((prev) => {
+      return {
+        ...prev,
+        presentPage: prev.presentPage - 1
+      }
+    })
+  }
+
+
+  const ReturnFilteredLogs = useCallback(() => {
+    return (
+      projectActivity
+        ?.filter((info) => {
+          // Filter by dropdown first
+          const actionMatch = DropdownFilter === "All" || info?.action?.toLowerCase() === DropdownFilter?.toLowerCase();
+
+          return actionMatch; // Only return activities that match the dropdown filter
+        })
+        .filter((info) => {
+          // Apply search AFTER filtering by dropdown
+          const taskIdMatch = info?.TaskId?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
+          const nameMatch = info?.name?.name?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
+          const taskMatch = info?.task?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
+
+          // If there's no search term, return all filtered results
+          return !SearchedInfo || SearchedInfo.trim() === "" || taskMatch || nameMatch || taskIdMatch;
+        })
+        .slice(projectPagination.start, projectPagination.end) // Apply pagination after filtering
+        .map((log, index) => (
+          <AdminLog key={log.id || index} info={log} />
+        ))
+
+    )
+  }, [SearchedInfo, projectActivity, DropdownFilter, projectPagination])
   return (
     <div className="w-screen h-screen bg-slate-50 p-4 overflow-x-hidden">
       <div className="w-11/12 m-auto">
@@ -122,6 +220,7 @@ const ViewProject = () => {
                     type="text"
                     placeholder="Search Logs.."
                     className="w-52 pl-7"
+                    onChange={(e) => setSearchedInfo(e.target.value)}
                   />
                 </div>
 
@@ -134,14 +233,18 @@ const ViewProject = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuCheckboxItem checked>
+                    <DropdownMenuCheckboxItem checked={DropdownFilter === "All"} onClick={() => setDropdownFilter("All")}>
                       All
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Completed"} onClick={() => setDropdownFilter("Completed")}>
                       Completed
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>Created</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>Updated</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Created"} onClick={() => setDropdownFilter("Created")}>
+                      Created
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Updated"} onClick={() => setDropdownFilter("Updated")}>
+                      Updated
+                    </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -153,38 +256,32 @@ const ViewProject = () => {
               <ActivitySkeleton />
             ) : (
               <>
-                {projectActivity?.map((log, index) => {
-                  // Check if the current index falls within the pagination range
-                  if (
-                    index >= projectPagination.start &&
-                    index < projectPagination.end
-                  ) {
-                    return <AdminLog key={log.id || index} info={log} />; // Use unique key, log.id or index
-                  }
-                  return null; // Avoid rendering undefined elements
-                })}
+                {ReturnFilteredLogs()}
+
               </>
             )}
           </CardContent>
 
           <CardFooter>
-            <Pagination className="w-full">
+            <Pagination className="w-full mt-2">
               <PaginationContent>
                 <PaginationItem>
                   {projectPagination.start !== 0 && (
                     <PaginationPrevious
-                    // onClick={}
+                      className="cursor-pointer bg-slate-200"
+                      onClick={PrevPage}
                     />
                   )}
                 </PaginationItem>
 
                 <p className="text-gray-800 font-semibold mx-20">
-                  Page 1 of {PageCountInfo?.totalPages}
+                  Page {PageCountInfo.presentPage} of {PageCountInfo?.totalPages}
                 </p>
                 <PaginationItem>
                   {projectPagination.end < projectInfo?.activityCount && (
                     <PaginationNext
-                    // onClick={ }
+                      className="cursor-pointer bg-slate-200"
+                      onClick={NextPage}
                     />
                   )}
                 </PaginationItem>

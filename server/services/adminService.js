@@ -1,7 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ActivityModel from "../model/ActivityLogModel.js";
-import { default as adminRepo, default as AdminReppsitory } from "../repositories/adminRepo.js";
+import {
+  default as adminRepo,
+  default as AdminReppsitory,
+} from "../repositories/adminRepo.js";
 import MailSender from "../Utility/MailSender.js";
 class AdminService {
   // signup service
@@ -180,20 +183,37 @@ class AdminService {
 
   // view Project service
 
-  async ViewProjectService({ projectId, start, end }) {
+  async ViewProjectService({ projectId, start, limit }) {
+    const getProjectInitials = (projectName) => {
+      return projectName
+        .split(" ") // Split by spaces
+        .map((word) => word[0].toUpperCase()) // Take the first letter of each word
+        .join(""); // Combine into initials
+    };
     try {
-      let projectInfo = await adminRepo.getProjectInfoRepo({ projectId })
-      let userIds = projectInfo.users
+      let projectInfo = await adminRepo.getProjectInfoRepo({ projectId });
+      let userIds = projectInfo.users;
       // getting activities logs
-      let activities = await adminRepo.projectActivities({ userIds, start, end })
-      let activityCount = await ActivityModel.find({ name: { $in: userIds } }).countDocuments()
+      let activities = await adminRepo.projectActivities({
+        userIds,
+        start,
+        limit,
+        projectname: projectInfo?.name,
+      });
+      let activityCount = await ActivityModel.find({
+        name: { $in: userIds },
+        TaskId: {
+          $regex: getProjectInitials(projectInfo?.name),
+          $options: "i",
+        },
+      }).countDocuments();
       if (projectInfo && activities) {
         return {
           status: 200,
           projectInfo: projectInfo,
           activities: activities,
-          activityCount:activityCount
-        }
+          activityCount: activityCount,
+        };
       }
     } catch (error) {
       return {

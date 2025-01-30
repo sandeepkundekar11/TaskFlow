@@ -95,14 +95,17 @@ class AdminController {
     }
   }
 
-
   // view project info and activities
 
   async viewProjectController(req, res) {
     try {
-      let { projectId } = req.params
-      let { start, end } = req.query
-      let projectActivities = await adminService.ViewProjectService({ projectId, start, end })
+      let { projectId } = req.params;
+      let { start, limit } = req.query;
+      let projectActivities = await adminService.ViewProjectService({
+        projectId,
+        start,
+        limit,
+      });
 
       if (projectActivities) {
         return res.status(projectActivities.status).json({
@@ -110,7 +113,7 @@ class AdminController {
           projectInfo: projectActivities.projectInfo,
           activityCount: projectActivities.activityCount,
           activities: projectActivities.activities,
-        })
+        });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

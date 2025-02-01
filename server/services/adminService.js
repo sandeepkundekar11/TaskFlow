@@ -146,7 +146,7 @@ class AdminService {
         },
         {
           name: "INPROGRESS",
-          value: allSubTask.filter((subtask) => subtask.status === "inProgress")
+          value: allSubTask.filter((subtask) => subtask.status === "inprogress")
             .length,
         },
         {
@@ -212,6 +212,39 @@ class AdminService {
           status: 200,
           projectInfo: projectInfo,
           activities: activities,
+          activityCount: activityCount,
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // get user activity
+  async getUserActivityService({ userId, start, limit }) {
+    try {
+      // getting user info
+      let userInfo = await adminRepo.getUserInfo({ userId });
+
+      // activities
+      let userActivity = await adminRepo.getUserActivity({
+        userId,
+        start,
+        limit,
+      });
+
+      let activityCount = await ActivityModel.find({
+        name: userId,
+      }).countDocuments();
+
+      if (userInfo && userInfo) {
+        return {
+          status: 200,
+          userInfo: userInfo,
+          userActivity: userActivity,
           activityCount: activityCount,
         };
       }

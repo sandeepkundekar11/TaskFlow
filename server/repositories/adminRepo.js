@@ -142,10 +142,32 @@ class AdminReppsitory {
         })
         .sort({ _id: -1 })
         .skip(start)
-        .limit(limit-start)
+        .limit(limit - start)
         .exec();
     } catch (error) {
       console.log("error while getting the project user activities");
+    }
+  }
+
+  // get user activity
+  async getUserInfo({ userId }) {
+    try {
+      return await UserModel.findOne({ _id: userId }, "name email role");
+    } catch (error) {
+      console.log("error while getting  the user info");
+    }
+  }
+
+  // get user activitis
+  async getUserActivity({ userId, start, limit }) {
+    try {
+      return await ActivityModel.find({ name: userId })
+        .sort({ _id: -1 })
+        .skip(start)
+        .limit(limit - start)
+        .exec();
+    } catch (error) {
+      console.log("error while getting  the user activity");
     }
   }
 }

@@ -1,3 +1,5 @@
+/* eslint-disable no-unsafe-optional-chaining */
+import ActivitySkeleton from "@/Components/loaders/ActivitySkeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,10 +25,91 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/constants";
+import useGetApi from "@/CustomHooks/useGetApi";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AdminUserView = () => {
   const Navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState();
+  const [UserActivities, setUserActivities] = useState([]);
+  // pages count
+  const [PageCountInfo, setPageCountInfo] = useState({
+    presentPage: 1,
+    totalPages: 1,
+  });
+  const [userPagination, setUserPaginaition] = useState({
+    start: 0,
+    limit: 10,
+  });
+  //   // calling get user activity api
+  const { userid } = useParams();
+  const {
+    callApi: getAllUserActivity,
+    data: userAllData,
+    loading: userDataLoading,
+  } = useGetApi(
+    `${BASE_URL}/admin/viewUser/${userid}?start=${userPagination.start}&&limit=${userPagination?.limit}`
+  );
+
+  useEffect(() => {
+    const isDataAvailable = UserActivities?.some(
+      (_, index) =>
+        index >= userPagination.start && index < userPagination.limit
+    );
+    if (!isDataAvailable) {
+      getAllUserActivity();
+    }
+  }, [userPagination]);
+
+  useEffect(() => {
+    setUserInfo(userAllData?.userInfo);
+
+    if (userAllData?.userActivity) {
+      setUserActivities((prev) => {
+        return [...prev, ...userAllData?.userActivity];
+      });
+      setPageCountInfo((prev) => {
+        return {
+          ...prev,
+          totalPages: Math.ceil(userAllData?.activityCount / 6),
+        };
+      });
+    }
+  }, [userAllData]);
+
+  const NextPage = () => {
+    setUserPaginaition((prev) => {
+      return {
+        ...prev,
+        start: prev.limit,
+        limit: prev.limit + 10,
+      };
+    });
+    setPageCountInfo((prev) => {
+      return {
+        ...prev,
+        presentPage: prev.presentPage + 1,
+      };
+    });
+  };
+
+  const Prevpage = () => {
+    setUserPaginaition((prev) => {
+      return {
+        ...prev,
+        start: prev.start - 10,
+        limit: prev.limit - 10,
+      };
+    });
+    setPageCountInfo((prev) => {
+      return {
+        ...prev,
+        presentPage: prev.presentPage - 1,
+      };
+    });
+  };
   return (
     <div className="w-screen h-screen bg-slate-50 p-4 overflow-x-hidden">
       <div className="w-11/12 m-auto">
@@ -43,24 +126,21 @@ const AdminUserView = () => {
               <Avatar className="w-12 h-12">
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <p className="text-lg text-gray-800 font-semibold">Sandeep K</p>
+              <p className="text-lg text-gray-800 font-semibold">
+                {userInfo?.name}
+              </p>
             </div>
             <div>
               <p className="text-lg font-medium text-gray-600">Email</p>
               <p className="text-base text-black font-medium">
-                Sandeep@gmail.com
+                {userInfo?.email}
               </p>
             </div>
 
             <div>
               <p className="text-lg font-medium text-gray-600">Role</p>
-              <p className="text-base text-black font-medium">Developer</p>
-            </div>
-
-            <div>
-              <p className="text-lg font-medium text-gray-600">Last Activity</p>
               <p className="text-base text-black font-medium">
-                2023-07-05 14:30:00
+                {userInfo?.role === "user" && "Developer"}
               </p>
             </div>
           </CardContent>
@@ -88,31 +168,57 @@ const AdminUserView = () => {
               <TableCaption>A list of All activity</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">S .No</TableHead>
+                  <TableHead className="w-[100px]">Task Id</TableHead>
                   <TableHead>Timestamp</TableHead>
                   <TableHead>Action</TableHead>
                   <TableHead className="text-right">Details</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((ele) => {
-                  return (
-                    <TableRow key={ele} className="h-12 my-3 border bg-white">
-                      <TableCell className="font-medium">{ele}</TableCell>
-                      <TableCell className="font-medium">
-                        2025-01-05T08:37:45.535Z
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {" "}
-                        Created task
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {" "}
-                        Task #599
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {userDataLoading ? (
+                  <ActivitySkeleton />
+                ) : (
+                  <>
+                    {UserActivities?.slice(
+                      userPagination.start,
+                      userPagination.limit
+                    )?.map((ele) => {
+                      return (
+                        <TableRow
+                          key={ele?._id}
+                          className="h-12 my-3 border bg-white"
+                        >
+                          <TableCell className="font-medium">
+                            {`#${ele?.TaskId}`}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {new Date(ele?.timeStamp).toLocaleString()}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {ele?.action === "Updated" && (
+                              <p className="text-base bg-green-300 w-24 rounded-lg text-center text-green-800">
+                                {ele?.action}
+                              </p>
+                            )}
+                            {ele?.action === "Deleted" && (
+                              <p className="text-base bg-red-300 w-24 rounded-lg text-center text-red-800">
+                                {ele?.action}
+                              </p>
+                            )}
+                            {ele?.action === "Created" && (
+                              <p className="text-base bg-blue-300 w-24 rounded-lg text-center text-blue-800">
+                                {ele?.action}
+                              </p>
+                            )}
+                          </TableCell>
+                          <TableCell className=" w-72 font-medium text-base">
+                            {ele?.task}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </>
+                )}
               </TableBody>
             </Table>
           </CardContent>
@@ -121,12 +227,20 @@ const AdminUserView = () => {
             <Pagination className="w-full">
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  {userPagination.start !== 0 && (
+                    <PaginationPrevious onClick={Prevpage} />
+                  )}
                 </PaginationItem>
 
-                <p className="text-gray-800 font-semibold mx-20">Page 1 of 1</p>
+                <p className="text-gray-800 font-semibold mx-20">
+                  {" "}
+                  Page {PageCountInfo.presentPage} of{" "}
+                  {PageCountInfo?.totalPages}
+                </p>
                 <PaginationItem>
-                  <PaginationNext href="#" />
+                  {userPagination.limit < userAllData?.activityCount && (
+                    <PaginationNext onClick={NextPage} />
+                  )}
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

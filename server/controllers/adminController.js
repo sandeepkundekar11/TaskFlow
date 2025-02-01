@@ -119,5 +119,30 @@ class AdminController {
       return res.status(500).json({ message: error.message });
     }
   }
+
+  // get user activities
+
+  async getUserActiviController(req, res) {
+    try {
+      let { userId } = req.params;
+      let { start, limit } = req.query;
+      let viewUserActivity = await adminService.getUserActivityService({
+        userId,
+        start,
+        limit,
+      });
+
+      if (viewUserActivity) {
+        return res.status(viewUserActivity.status).json({
+          message: viewUserActivity.message,
+          userInfo: viewUserActivity.userInfo,
+          userActivity: viewUserActivity.userActivity,
+          activityCount: viewUserActivity.activityCount,
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 }
 export default new AdminController();

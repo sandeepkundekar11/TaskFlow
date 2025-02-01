@@ -50,8 +50,8 @@ const ViewProject = () => {
 
   const [viewProjectInfo, setViewProjectInfo] = useState();
   const [projectActivity, setProjectActivity] = useState([]);
-  const [SearchedInfo, setSearchedInfo] = useState("")
-  const [DropdownFilter, setDropdownFilter] = useState("All")
+  const [SearchedInfo, setSearchedInfo] = useState("");
+  const [DropdownFilter, setDropdownFilter] = useState("All");
 
   //single page data
 
@@ -63,37 +63,35 @@ const ViewProject = () => {
     `${BASE_URL}/admin/viewProject/${id}?start=${projectPagination.start}&&limit=${projectPagination?.end}`
   );
 
-
   useEffect(() => {
     // checks that whether data is present or not if data is not present then only call the api
-    const isDataAvailable = projectActivity.some((_, index) => index >= projectPagination.start && index < projectPagination.end);
+    const isDataAvailable = projectActivity.some(
+      (_, index) =>
+        index >= projectPagination.start && index < projectPagination.end
+    );
     if (!isDataAvailable) {
-      getProjectInfo()
+      getProjectInfo();
     }
-
-  }, [projectPagination])
+  }, [projectPagination]);
 
   useEffect(() => {
-    setViewProjectInfo(projectInfo?.projectInfo)
+    setViewProjectInfo(projectInfo?.projectInfo);
 
     if (projectInfo?.activities) {
       setProjectActivity((prev) => {
-        return [...prev, ...projectInfo?.activities]
-      })
+        return [...prev, ...projectInfo?.activities];
+      });
     }
-  }, [projectInfo])
-
+  }, [projectInfo]);
 
   useEffect(() => {
     setPageCountInfo((prev) => {
       return {
         ...prev,
-        totalPages: Math.ceil(projectInfo?.activityCount / 6)
-      }
-    })
-
-  }, [projectActivity])
-
+        totalPages: Math.ceil(projectInfo?.activityCount / 6),
+      };
+    });
+  }, [projectActivity]);
 
   // going next page
   const NextPage = () => {
@@ -101,18 +99,17 @@ const ViewProject = () => {
       return {
         ...prev,
         start: prev.end,
-        end: prev.end + 6
-      }
-    })
+        end: prev.end + 6,
+      };
+    });
 
     setPageCountInfo((prev) => {
       return {
         ...prev,
-        presentPage: prev.presentPage + 1
-      }
-    })
-  }
-
+        presentPage: prev.presentPage + 1,
+      };
+    });
+  };
 
   // coming to previous page
   const PrevPage = () => {
@@ -120,45 +117,53 @@ const ViewProject = () => {
       return {
         ...prev,
         start: prev.start - 6,
-        end: prev.end - 6
-      }
-    })
-
+        end: prev.end - 6,
+      };
+    });
 
     setPageCountInfo((prev) => {
       return {
         ...prev,
-        presentPage: prev.presentPage - 1
-      }
-    })
-  }
+        presentPage: prev.presentPage - 1,
+      };
+    });
+  };
 
-
+  // returns the  filtered log component
   const ReturnFilteredLogs = useCallback(() => {
-    return (
-      projectActivity
-        ?.filter((info) => {
-          // Filter by dropdown first
-          const actionMatch = DropdownFilter === "All" || info?.action?.toLowerCase() === DropdownFilter?.toLowerCase();
+    return projectActivity
+      ?.filter((info) => {
+        // Filter by dropdown first
+        const actionMatch =
+          DropdownFilter === "All" ||
+          info?.action?.toLowerCase() === DropdownFilter?.toLowerCase();
 
-          return actionMatch; // Only return activities that match the dropdown filter
-        })
-        .filter((info) => {
-          // Apply search AFTER filtering by dropdown
-          const taskIdMatch = info?.TaskId?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
-          const nameMatch = info?.name?.name?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
-          const taskMatch = info?.task?.toLowerCase()?.includes(SearchedInfo?.toLowerCase());
+        return actionMatch; // Only return activities that match the dropdown filter
+      })
+      .filter((info) => {
+        // Apply search AFTER filtering by dropdown
+        const taskIdMatch = info?.TaskId?.toLowerCase()?.includes(
+          SearchedInfo?.toLowerCase()
+        );
+        const nameMatch = info?.name?.name
+          ?.toLowerCase()
+          ?.includes(SearchedInfo?.toLowerCase());
+        const taskMatch = info?.task
+          ?.toLowerCase()
+          ?.includes(SearchedInfo?.toLowerCase());
 
-          // If there's no search term, return all filtered results
-          return !SearchedInfo || SearchedInfo.trim() === "" || taskMatch || nameMatch || taskIdMatch;
-        })
-        .slice(projectPagination.start, projectPagination.end) // Apply pagination after filtering
-        .map((log, index) => (
-          <AdminLog key={log.id || index} info={log} />
-        ))
-
-    )
-  }, [SearchedInfo, projectActivity, DropdownFilter, projectPagination])
+        // If there's no search term, return all filtered results
+        return (
+          !SearchedInfo ||
+          SearchedInfo.trim() === "" ||
+          taskMatch ||
+          nameMatch ||
+          taskIdMatch
+        );
+      })
+      .slice(projectPagination.start, projectPagination.end) // Apply pagination after filtering
+      .map((log, index) => <AdminLog key={log.id || index} info={log} />);
+  }, [SearchedInfo, projectActivity, DropdownFilter, projectPagination]);
   return (
     <div className="w-screen h-screen bg-slate-50 p-4 overflow-x-hidden">
       <div className="w-11/12 m-auto">
@@ -233,16 +238,28 @@ const ViewProject = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuCheckboxItem checked={DropdownFilter === "All"} onClick={() => setDropdownFilter("All")}>
+                    <DropdownMenuCheckboxItem
+                      checked={DropdownFilter === "All"}
+                      onClick={() => setDropdownFilter("All")}
+                    >
                       All
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Completed"} onClick={() => setDropdownFilter("Completed")}>
-                      Completed
+                    <DropdownMenuCheckboxItem
+                      checked={DropdownFilter === "Deleted"}
+                      onClick={() => setDropdownFilter("Deleted")}
+                    >
+                      Deleted
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Created"} onClick={() => setDropdownFilter("Created")}>
+                    <DropdownMenuCheckboxItem
+                      checked={DropdownFilter === "Created"}
+                      onClick={() => setDropdownFilter("Created")}
+                    >
                       Created
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem checked={DropdownFilter === "Updated"} onClick={() => setDropdownFilter("Updated")}>
+                    <DropdownMenuCheckboxItem
+                      checked={DropdownFilter === "Updated"}
+                      onClick={() => setDropdownFilter("Updated")}
+                    >
                       Updated
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
@@ -255,10 +272,7 @@ const ViewProject = () => {
             {projectInfoLoading ? (
               <ActivitySkeleton />
             ) : (
-              <>
-                {ReturnFilteredLogs()}
-
-              </>
+              <>{ReturnFilteredLogs()}</>
             )}
           </CardContent>
 
@@ -275,7 +289,8 @@ const ViewProject = () => {
                 </PaginationItem>
 
                 <p className="text-gray-800 font-semibold mx-20">
-                  Page {PageCountInfo.presentPage} of {PageCountInfo?.totalPages}
+                  Page {PageCountInfo.presentPage} of{" "}
+                  {PageCountInfo?.totalPages}
                 </p>
                 <PaginationItem>
                   {projectPagination.end < projectInfo?.activityCount && (

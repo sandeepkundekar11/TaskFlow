@@ -57,11 +57,20 @@ adminRouter.get(
   adminController.getDashboardDataController
 );
 
-
-// new project Info with activities
+// view project Info with activities
 //  start, end query parameters
 adminRouter.get(
   "/viewProject/:projectId",
   userAuth,
-  adminController.viewProjectController)
+  adminController.viewProjectController
+);
+
+//view user Info with activities
+//  start, end query parameters
+
+adminRouter.get(
+  "/viewUser/:userId",
+  userAuth,
+  adminController.getUserActiviController
+);
 export default adminRouter;

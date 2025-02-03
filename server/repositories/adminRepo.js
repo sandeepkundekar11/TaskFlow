@@ -170,6 +170,31 @@ class AdminReppsitory {
       console.log("error while getting  the user activity");
     }
   }
+
+  // get admin info
+  async getAdminInfo({ adminId }) {
+    try {
+      return await AdministratorModel.findOne({ _id: adminId }, "company email description")
+    } catch (error) {
+      console.log("error while getting  the adminInfo");
+    }
+  }
+
+  // update admin
+
+  async updateAdmin({ adminId, infoToUpdate }) {
+    let { email, company, description } = infoToUpdate
+    let obj = {}
+    if (email) obj.email = email
+    if (company) obj.company = company
+    if (description) obj.description = description
+
+    try {
+      return await AdministratorModel.updateOne({ _id: adminId }, { $set: obj })
+    } catch (error) {
+      console.log("error while setting the admin info");
+    }
+  }
 }
 
 export default new AdminReppsitory();

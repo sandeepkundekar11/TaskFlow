@@ -8,9 +8,12 @@ const AdministratorSchema = new Schema({
     type: String,
     required: true,
   },
-  type:{
-    type:String,
-    default:"admin"
+  type: {
+    type: String,
+    default: "admin"
+  },
+  description: {
+    type: String
   }
 });
 

@@ -144,5 +144,43 @@ class AdminController {
       return res.status(500).json({ message: error.message });
     }
   }
+
+
+  // get admin info and update admin info
+
+  async adminInfoController(req, res) {
+    try {
+      let adminId = req.userId
+      let requestType = req.params.type
+      if (requestType === "getAdmin") {
+        let admin = await adminService.getAdminInfo({ adminId })
+        if (admin) {
+          return res.status(admin.status).json({
+            message: admin.message,
+            admin: admin.admin
+          })
+        }
+      }
+
+
+      // 
+
+
+      if (requestType === "updateAdmin") {
+        let { email, company, description } = req.body
+
+        if (!email || !company || !description) {
+          return res.status(404).json({ message: "provide information" })
+        }
+        let infoToUpdate = { email, company, description }
+        let updateAdmin = await adminService.updateAdminInfo({ adminId, infoToUpdate })
+        if (updateAdmin) {
+          return res.status(updateAdmin.status).json({ message: updateAdmin.message })
+        }
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 }
 export default new AdminController();

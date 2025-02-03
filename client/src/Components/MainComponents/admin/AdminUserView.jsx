@@ -73,7 +73,7 @@ const AdminUserView = () => {
       setPageCountInfo((prev) => {
         return {
           ...prev,
-          totalPages: Math.ceil(userAllData?.activityCount / 6),
+          totalPages: Math.ceil(userAllData?.activityCount / 10),
         };
       });
     }

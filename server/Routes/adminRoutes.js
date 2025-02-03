@@ -73,4 +73,13 @@ adminRouter.get(
   userAuth,
   adminController.getUserActiviController
 );
+
+
+// get admin info(type=="getAdmin")
+
+adminRouter.get("/info/:type", userAuth,adminController.adminInfoController)
+
+// set admin info( type==="updateAdmin")
+adminRouter.post("/info/:type", userAuth,adminController.adminInfoController)
+
 export default adminRouter;

@@ -255,6 +255,44 @@ class AdminService {
       };
     }
   }
+
+
+  // get admin info
+  async getAdminInfo({ adminId }) {
+    try {
+      let admin = await adminRepo.getAdminInfo({ adminId })
+      if (admin) {
+        return {
+          status: 200,
+          admin: admin
+        }
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // update adminInfo
+
+  async updateAdminInfo({ adminId, infoToUpdate }) {
+    try {
+      let updateAdmin = await adminRepo.updateAdmin({ adminId, infoToUpdate })
+      if (updateAdmin) {
+        return {
+          status: 200,
+          message: "updated successfully"
+        }
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
 }
 
 export default new AdminService();

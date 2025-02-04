@@ -4,6 +4,7 @@ import ProjectModel from "../model/ProjectModel.js";
 import SubTaskModel from "../model/SubTasksModel.js";
 import TaskModel from "../model/TaskModel.js";
 import UserModel from "../model/UserModel.js";
+import mongoose from "mongoose";
 
 class AdminReppsitory {
   async findAdminByEmail(email) {
@@ -174,7 +175,10 @@ class AdminReppsitory {
   // get admin info
   async getAdminInfo({ adminId }) {
     try {
-      return await AdministratorModel.findOne({ _id: adminId }, "company email description")
+      return await AdministratorModel.findOne(
+        { _id: adminId },
+        "company email description"
+      );
     } catch (error) {
       console.log("error while getting  the adminInfo");
     }
@@ -183,18 +187,71 @@ class AdminReppsitory {
   // update admin
 
   async updateAdmin({ adminId, infoToUpdate }) {
-    let { email, company, description } = infoToUpdate
-    let obj = {}
-    if (email) obj.email = email
-    if (company) obj.company = company
-    if (description) obj.description = description
+    let { email, company, description } = infoToUpdate;
+    let obj = {};
+    if (email) obj.email = email;
+    if (company) obj.company = company;
+    if (description) obj.description = description;
 
     try {
-      return await AdministratorModel.updateOne({ _id: adminId }, { $set: obj })
+      return await AdministratorModel.updateOne(
+        { _id: adminId },
+        { $set: obj }
+      );
     } catch (error) {
       console.log("error while setting the admin info");
     }
   }
+
+  // delete user and delete user realated all information
+  async deleteUserData({ userId }) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // Find all tasks authored by the user
+      const userTasks = await TaskModel.find({ author: userId })
+        .select("_id")
+        .session(session);
+      const taskIds = userTasks.map((task) => task._id);
+
+      // Delete all subtasks where the user is the author
+      await SubTaskModel.deleteMany({ author: userId }).session(session);
+
+      // Delete all tasks where the user is the author
+      await TaskModel.deleteMany({ author: userId }).session(session);
+
+      // Remove the user from all projects and their associated tasks
+      await ProjectModel.updateMany(
+        { users: userId },
+        {
+          $pull: {
+            users: userId,
+            tasks: { $in: taskIds }, // Remove user's tasks from projects
+          },
+        }
+      ).session(session);
+
+      // Delete all activities related to the user
+      await ActivityModel.deleteMany({ name: userId }).session(session);
+
+      //  delete user from db
+
+      let user = await UserModel.deleteOne({ _id: userId }).session(session);
+      // Commit transaction
+      await session.commitTransaction();
+      session.endSession();
+
+      console.log(`User ${userId} and all related data successfully deleted`);
+      return user;
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error("Error while deleting user data:", error);
+    }
+  }
+
+  // then remove the user from the data base
 }
 
 export default new AdminReppsitory();

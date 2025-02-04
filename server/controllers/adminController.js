@@ -145,38 +145,53 @@ class AdminController {
     }
   }
 
-
   // get admin info and update admin info
 
   async adminInfoController(req, res) {
     try {
-      let adminId = req.userId
-      let requestType = req.params.type
+      let adminId = req.userId;
+      let requestType = req.params.type;
       if (requestType === "getAdmin") {
-        let admin = await adminService.getAdminInfo({ adminId })
+        let admin = await adminService.getAdminInfo({ adminId });
         if (admin) {
           return res.status(admin.status).json({
             message: admin.message,
-            admin: admin.admin
-          })
+            admin: admin.admin,
+          });
         }
       }
 
-
-      // 
-
+      //
 
       if (requestType === "updateAdmin") {
-        let { email, company, description } = req.body
+        let { email, company, description } = req.body;
 
         if (!email || !company || !description) {
-          return res.status(404).json({ message: "provide information" })
+          return res.status(404).json({ message: "provide information" });
         }
-        let infoToUpdate = { email, company, description }
-        let updateAdmin = await adminService.updateAdminInfo({ adminId, infoToUpdate })
+        let infoToUpdate = { email, company, description };
+        let updateAdmin = await adminService.updateAdminInfo({
+          adminId,
+          infoToUpdate,
+        });
         if (updateAdmin) {
-          return res.status(updateAdmin.status).json({ message: updateAdmin.message })
+          return res
+            .status(updateAdmin.status)
+            .json({ message: updateAdmin.message });
         }
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+  // delete all user infomation controller
+
+  async deleteAllUserDataController(req, res) {
+    try {
+      let { userId } = req.params;
+      let userInfo = await adminService.DeleteAllUserInfo({ userId });
+      if (userInfo) {
+        return res.status(userInfo.status).json({ message: userInfo.message });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

@@ -18,10 +18,15 @@ import { useNavigate } from "react-router-dom";
 import AddUserPopup from "../Popups/AddUserPopup";
 import { Button } from "../ui/button";
 import ToolTipButton from "./TooltipButton";
+import UserDeletePopup from "../Popups/DeleteUser";
+import useDeleteApi from "@/CustomHooks/useDeleteApi";
 
 const AdminUsers = () => {
   const Navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+
+  const [popupTitle, setPopupTitle] = useState("");
+
   const [AllUsersWithTasks, SetAllUsersWithTasks] = useState();
   const {
     data: allUserData,
@@ -34,14 +39,68 @@ const AdminUsers = () => {
     callApi: calAddUserApi,
   } = usePostApi(`${BASE_URL}/admin/addUser`);
 
+  // calling delete api
+  const {
+    callApi: DeleleUser,
+    data: deleteMessage,
+    loading: deleteUserLoading,
+  } = useDeleteApi();
+  //
   useEffect(() => {
     callGetAllUser();
-    setShowPopup(false);
-  }, [addUserInfo]);
+    setPopupTitle("");
+  }, [addUserInfo, deleteMessage]);
 
   useEffect(() => {
     SetAllUsersWithTasks(allUserData?.users);
   }, [allUserData]);
+
+  // stores the seletced user Id to delete the user
+  const [SelectedUserId, setSelectedUserId] = useState();
+  // popup component arr
+  const Components = [
+    {
+      title: "adduser",
+      comp: (
+        <AddUserPopup
+          SendData={(info) => {
+            calAddUserApi(info);
+
+            if (addUserInfo === "User added and Initation is Been send") {
+              setPopupTitle("");
+            }
+          }}
+          loader={addUserLoading}
+          onCancel={() => setPopupTitle("")}
+        />
+      ),
+    },
+
+    {
+      title: "removeUser",
+      comp: (
+        <UserDeletePopup
+          loading={deleteUserLoading}
+          OnDelete={() => {
+            console.log(SelectedUserId, "SelectedUserId");
+            DeleleUser(`${BASE_URL}/admin/deleteUser/${SelectedUserId}`);
+          }}
+          onCancel={() => setPopupTitle("")}
+        />
+      ),
+    },
+  ];
+
+  // this function returns the popups based on title
+  const GetPopups = (title) => {
+    let components = Components.find((com) => com.title === title);
+
+    if (!components) {
+      return <></>;
+    } else {
+      return components.comp;
+    }
+  };
 
   return (
     <div className="w-[85%]">
@@ -52,7 +111,7 @@ const AdminUsers = () => {
           <Button
             className="mt-3 w-32 h-8 rounded-sm shadow-md bg-blue-500 hover:bg-blue-600"
             onClick={() => {
-              setShowPopup(true);
+              setPopupTitle("adduser");
             }}
           >
             + Add New User
@@ -132,6 +191,10 @@ const AdminUsers = () => {
                           variant="outline"
                           size="sm"
                           className="ml-2 hover:bg-red-500"
+                          onClick={() => {
+                            setSelectedUserId(ele.id);
+                            setPopupTitle("removeUser");
+                          }}
                         >
                           Remove
                         </Button>
@@ -145,19 +208,7 @@ const AdminUsers = () => {
         </Table>
       </div>
 
-      {showPopup && (
-        <AddUserPopup
-          SendData={(info) => {
-            calAddUserApi(info);
-
-            if (addUserInfo === "User added and Initation is Been send") {
-              setShowPopup(false);
-            }
-          }}
-          loader={addUserLoading}
-          onCancel={() => setShowPopup(false)}
-        />
-      )}
+      {GetPopups(popupTitle)}
     </div>
   );
 };

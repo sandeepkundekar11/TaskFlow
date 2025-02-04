@@ -256,16 +256,15 @@ class AdminService {
     }
   }
 
-
   // get admin info
   async getAdminInfo({ adminId }) {
     try {
-      let admin = await adminRepo.getAdminInfo({ adminId })
+      let admin = await adminRepo.getAdminInfo({ adminId });
       if (admin) {
         return {
           status: 200,
-          admin: admin
-        }
+          admin: admin,
+        };
       }
     } catch (error) {
       return {
@@ -279,12 +278,30 @@ class AdminService {
 
   async updateAdminInfo({ adminId, infoToUpdate }) {
     try {
-      let updateAdmin = await adminRepo.updateAdmin({ adminId, infoToUpdate })
+      let updateAdmin = await adminRepo.updateAdmin({ adminId, infoToUpdate });
       if (updateAdmin) {
         return {
           status: 200,
-          message: "updated successfully"
-        }
+          message: "updated successfully",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+  // delete all data of the user
+
+  async DeleteAllUserInfo({ userId }) {
+    try {
+      let userAllData = await adminRepo.deleteUserData({ userId });
+      if (userAllData) {
+        return {
+          status: 200,
+          message: "user and user related all data has been removed",
+        };
       }
     } catch (error) {
       return {

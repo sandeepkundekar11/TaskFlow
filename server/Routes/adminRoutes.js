@@ -74,12 +74,19 @@ adminRouter.get(
   adminController.getUserActiviController
 );
 
-
 // get admin info(type=="getAdmin")
 
-adminRouter.get("/info/:type", userAuth,adminController.adminInfoController)
+adminRouter.get("/info/:type", userAuth, adminController.adminInfoController);
 
 // set admin info( type==="updateAdmin")
-adminRouter.post("/info/:type", userAuth,adminController.adminInfoController)
+adminRouter.post("/info/:type", userAuth, adminController.adminInfoController);
+
+// delete all user information
+
+adminRouter.delete(
+  "/deleteUser/:userId",
+  userAuth,
+  adminController.deleteAllUserDataController
+);
 
 export default adminRouter;

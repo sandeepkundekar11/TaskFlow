@@ -1,6 +1,6 @@
-import UserRepo from "../repositories/UserRepo.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import UserRepo from "../repositories/UserRepo.js";
 class UserServices {
   async UserLoginService(email, password) {
     try {
@@ -60,6 +60,38 @@ class UserServices {
       return { status: 200, info: userCompanies.projects };
     } catch (error) {
       return { status: 500, message: "internal server error" };
+    }
+  }
+
+
+
+  // get userInfo service
+
+  async getUserInfoService({ userId }) {
+    try {
+      let userInfo = await UserRepo.getUserInfoRepo({ userId })
+      if (userInfo) {
+        return { status: 200, user: userInfo }
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+
+  // update user
+  async updateUserService({ userId, info }) {
+    try {
+      let updateUser = await UserRepo.updateUserInfoRepo({ userId, info })
+
+      if (updateUser) {
+        return {
+          status: 200,
+          message: "user updated successfully"
+        }
+      }
+    } catch (error) {
+      return { status: 500, message: error.message };
     }
   }
 }

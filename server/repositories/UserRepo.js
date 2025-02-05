@@ -68,6 +68,39 @@ class UserRepo {
       console.log("error while updating the invitation");
     }
   }
+
+  // get user info
+
+  async getUserInfoRepo({ userId }) {
+    try {
+      return await UserModel.findOne({ _id: userId }).populate({
+        path: "projects",
+        model: "project",
+        select: "name description"
+      })
+    } catch (error) {
+      console.log("error while getting user info");
+    }
+  }
+
+  // update user info
+
+  async updateUserInfoRepo({ userId, info }) {
+    try {
+      let { name, email, password } = info
+      let obj = {}
+
+      if (name) obj.name = name
+      if (email) obj.email = email
+
+      return await UserModel.updateOne({ _id: userId }, {
+        $set: obj
+      })
+    } catch (error) {
+      console.log("error while updating  user info");
+    }
+  }
+
 }
 
 export default new UserRepo();

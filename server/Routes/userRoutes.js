@@ -110,4 +110,13 @@ UserRouter.post(
   userAuth,
   ProjectSprintController.completeProjectController
 );
+
+
+// get user info
+
+UserRouter.get("/userInfo", userAuth, userController.getUserInfoController)
+
+// update user info
+
+UserRouter.put("/updateUserInfo", userAuth, userController.updateUserInfo)
 export default UserRouter;

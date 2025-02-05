@@ -1,22 +1,85 @@
 import { Button } from "@/Components/ui/button"
 import { Input } from "@/Components/ui/input"
-import { memo } from "react"
+import { BASE_URL } from "@/constants"
+import useGetApi from "@/CustomHooks/useGetApi"
+import usePutApi from "@/CustomHooks/usePutApi"
+import { memo, useEffect, useState } from "react"
 
 const UserProfilePage = () => {
+
+    const [userInfo, setUserInfo] = useState(null)
+    const [isUpdateUser, setIsUpdateuser] = useState(false)
+    // calling get user info api
+    const { callApi: getUserInfo, data: user } = useGetApi(`${BASE_URL}/user/userInfo`)
+
+    // calling update api 
+
+    const { callApi: updateUser, data: updateMessage, loading: updateLoading } = usePutApi(`${BASE_URL}/user/updateUserInfo`)
+    useEffect(() => {
+        getUserInfo()
+    }, [])
+
+    // store user info
+
+    useEffect(() => {
+        setUserInfo(user?.user)
+    }, [user])
+
+
+    const onCancel = () => {
+        setIsUpdateuser(false)
+        // calling get user info api
+        getUserInfo()
+    }
+
+    const OnSave = () => {
+        updateUser({
+            name: userInfo?.name,
+            email: userInfo?.email
+        })
+    }
+
+
+    useEffect(() => {
+        setIsUpdateuser(false)
+    }, [updateMessage])
     return (
-        <div className="w-full h-auto  pt-20 bg-slate-100">
+        <div className="w-full min-h-screen h-auto  pt-20 bg-slate-100">
             <div className="w-[90vw] h-auto m-auto space-y-8 pb-8">
                 <div className=" rounded-sm p-4 border shadow-md bg-white">
                     <h1 className="font-bold text-2xl">Personal Information</h1>
                     {/* personal information */}
                     <div className="grid grid-cols-3 space-y-6 mt-4">
-                        <Input className="col-span-2 bg-white h-10" type="text" placeholder="Name" />
-                        <Input className="col-span-2 bg-white h-10" type="email" placeholder="Email" />
-                        <Input className="col-span-2 bg-white h-10" type="password" placeholder="Password" />
+                        <Input className={`col-span-2 bg-white h-10 ${!isUpdateUser && "cursor-not-allowed"}`} type="text" placeholder="Name" value={userInfo?.name} onChange={(e) => {
+                            isUpdateUser && setUserInfo((prev) => {
+                                return {
+                                    ...prev,
+                                    name: e.target.value
+                                }
+                            })
+                        }} />
+                        <Input className={`col-span-2 bg-white h-10 ${!isUpdateUser && "cursor-not-allowed"}`} type="email" placeholder="Email" value={userInfo?.email}
+                            onChange={(e) => {
+                                isUpdateUser && setUserInfo((prev) => {
+                                    return {
+                                        ...prev,
+                                        email: e.target.value
+                                    }
+                                })
+                            }} />
                     </div>
 
                     <div className="mt-3">
-                        <Button>Save Changes</Button>
+                        {
+                            isUpdateUser ? <div className="flex space-x-4">
+                                <Button onClick={OnSave}>{
+                                    updateLoading ? <div className="w-7 h-7 rounded-full bg-transparent border-b-2 border-l-2 animate-spin"></div> : "Save Changes"
+                                }</Button>
+                                <Button onClick={onCancel}>Cancel</Button></div>
+                                :
+                                <Button onClick={() => { setIsUpdateuser(true) }}>Edit</Button>
+                        }
+
                     </div>
                 </div>
 
@@ -36,11 +99,11 @@ const UserProfilePage = () => {
 
                         <div className="grid grid-cols-3 space-y-4 mt-3">
                             {
-                                [1, 2, 3, 4].map((projects) => {
+                                userInfo?.projects?.map((projects) => {
                                     return (
-                                        <div key={projects} className="col-span-2 border  h-auto rounded-xl p-2 shadow-md bg-slate-50">
-                                            <h1 className="text-lg font-medium text-gray-700">E-Commerce Platform</h1>
-                                            <p className="text-base text-gray-500">Developer</p>
+                                        <div key={projects?._id} className="col-span-2 border  h-auto rounded-xl p-2 shadow-md bg-slate-50">
+                                            <h1 className="text-lg font-medium text-gray-700">{projects?.name}</h1>
+                                            <p className="text-base text-gray-500">{projects?.description}</p>
                                         </div>
                                     )
                                 })
@@ -53,44 +116,6 @@ const UserProfilePage = () => {
 
                 {/* Task & Activity Overview */}
 
-                <div className="bg-white rounded-sm p-4 shadow-md border">
-                    <h1 className="font-bold text-2xl"> Task  Overview</h1>
-
-                    <h1 className="font-bold text-xl mt-3 text-slate-500">Task Status (To-Do, In Progress, Done)</h1>
-                    <div className="grid grid-cols-3 h-auto mt-4">
-                        <div className="col-span-1">
-                            <div className="h-12 w-[85%] flex justify-center items-center  bg-slate-100">TO DO</div>
-                            {/* todo task */}
-                            <div className=" w-[85%] space-y-4">
-                                {/* 1 */}
-                                <div className="p-2 border flex">
-                                    <p className="text-base font-medium w-[80%]">Implement payment gateway API endpoints</p>
-                                    <div className="bg-blue-400 text-sm h-8 w-16 flex items-center justify-center rounded-xl">TODO</div>
-                                </div>
-                                {/* 2 */}
-                                <div className="p-2 border flex">
-                                    <p className="text-base font-medium w-[80%]">Implement payment gateway API endpoints</p>
-                                    <div className="bg-blue-400 text-sm h-8 w-16 flex items-center justify-center rounded-xl">TODO</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-span-1">
-                            <div className="h-12 w-[85%] flex justify-center items-center  bg-slate-100">IN PROGRESS</div>
-                            {/* In progress task */}
-                            <div className=" w-[85%]">
-
-                            </div>
-                        </div>
-                        <div className="col-span-1">
-                            <div className="h-12 w-[85%] flex justify-center items-center  bg-slate-100">COMPLETED</div>
-                            {/* completed task */}
-                            <div className=" w-[85%]">
-
-                            </div>
-                        </div>
-                    </div>
-                    <Button className="w-60 mt-6 bg-slate-600 hover:bg-slate-700"> See more..</Button>
-                </div>
             </div>
         </div>
     )

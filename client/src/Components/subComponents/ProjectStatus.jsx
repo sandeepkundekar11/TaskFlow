@@ -147,6 +147,38 @@ const ProjectStatus = () => {
     setDraggedData({ taskId: "", data: "" });
   };
 
+  // calling complete Sprint api
+  const { callApi: CompleteSprint, data: completeSprintData } = usePostApi(
+    `${BASE_URL}/user/completeSprint/${projectId}/${currentSprintInfo?._id}`
+  );
+
+  const onCompleteSprint = () => {
+    // complete sprintApi call
+    CompleteSprint();
+
+    // setCurrentSprintInfo
+  };
+
+  useEffect(() => {
+    if (completeSprintData) {
+      // updating the Project info
+      setProjectInfo((prev) => {
+        return {
+          ...prev,
+          sprint: [
+            ...prev.sprint,
+            {
+              name: `Sprint-${prev?.sprint?.length + 1}`,
+            },
+          ],
+        };
+      });
+
+      // upadating the setCurrentSprintInfo state
+
+      setCurrentSprintInfo(null);
+    }
+  }, [completeSprintData]);
   return (
     <div className="w-[95%] p-4 overflow-x-hidden">
       <h1 className="text-2xl font-semibold">
@@ -186,10 +218,10 @@ const ProjectStatus = () => {
         })}
       </div>
 
-      {!currenrSprintData?.sprints ? (
+      {!currenrSprintData?.sprints || currentSprintInfo === null ? (
         <div className="w-full h-20 flex justify-center items-center">
           <h1 className="text-2xl font-semibold text-gray-600">
-            Currently Sprint is Running
+            Currently Sprint is Not Running
           </h1>
         </div>
       ) : (
@@ -202,7 +234,8 @@ const ProjectStatus = () => {
                 <p className="text-2xl font-semibold text-gray-600 mt-3">
                   {currentSprintInfo?.name}
                 </p>
-                <Button>Complete Sprint</Button>
+                {/* complete sprint Button */}
+                <Button onClick={onCompleteSprint}>Complete Sprint</Button>
               </div>
               <Card className="w-full h-auto mt-4 p-2 shadow-none border-none rounded-none bg-gray-100">
                 <CardContent>

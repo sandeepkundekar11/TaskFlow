@@ -1,5 +1,6 @@
 import ProjectModel from "../model/ProjectModel.js";
 import SprintModel from "../model/SprintModel.js";
+import SubTaskModel from "../model/SubTasksModel.js";
 import TaskModel from "../model/TaskModel.js";
 
 class UserProjectRepo {
@@ -201,6 +202,34 @@ class UserProjectRepo {
       });
     } catch (error) {
       console.log("error while getting the project backlogs");
+    }
+  }
+
+  // complete the sprint
+  async CompleteSprint({ projectId, sprintId }) {
+    try {
+      return await SprintModel.updateOne(
+        { project: projectId, _id: sprintId },
+        {
+          $set: {
+            isCompleted: true,
+          },
+        }
+      );
+    } catch (error) {
+      console.log("error while getting completing the sprint");
+    }
+  }
+
+  // checks the all SubTask has completed or not before completing the sprint
+
+  async isAllSubTaskCompleted({ SubTaskIds }) {
+    try {
+      let SubTasks = await SubTaskModel.find({ _id: { $in: SubTaskIds } });
+      // insuring that the all subTasks are completd
+      return SubTasks.every((subtask) => subtask.status === "completed");
+    } catch (error) {
+      console.log("error while  checking the Task status");
     }
   }
 }

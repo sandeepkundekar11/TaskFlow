@@ -101,6 +101,13 @@ UserRouter.put(
   "/updateSubTask/:projectId/:subTaskId",
   userAuth,
   ProjectSprintController.updateSubTask
-)
+);
 
+// complete the sprint
+
+UserRouter.post(
+  "/completeSprint/:projectId/:sprintId",
+  userAuth,
+  ProjectSprintController.completeProjectController
+);
 export default UserRouter;

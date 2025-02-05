@@ -44,51 +44,54 @@ class ProjectSprintController {
           createdTaskId: projectId,
         });
 
-        return res
-          .status(newSubTask?.status)
-          .json({ message: newSubTask.message, subTaskId: newSubTask.subTaskId });
+        return res.status(newSubTask?.status).json({
+          message: newSubTask.message,
+          subTaskId: newSubTask.subTaskId,
+        });
       }
     } catch (error) {
       return res.json({ message: error.message });
     }
   }
 
-
   // get completed sprint and project info
   async getProjectInfoController(req, res) {
     try {
-      let { projectId } = req.params
-      let project = await ProjectSprintService.getProjectAndCompletedSprintInfo({ projectId })
+      let { projectId } = req.params;
+      let project = await ProjectSprintService.getProjectAndCompletedSprintInfo(
+        { projectId }
+      );
       if (project) {
         return res.status(project.status).json({
           message: project.message,
           projectInfo: project.projectInfo,
-          sprint: project.sprintInfo
-        })
+          sprint: project.sprintInfo,
+        });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   }
 
-
   // update the subtask
 
   async updateSubTask(req, res) {
     try {
-
       let { Taskstatus, title } = req.body;
 
       if (!Taskstatus || !title) {
-        return res.status(404).json({ message: "provide all information" })
+        return res.status(404).json({ message: "provide all information" });
       }
-      let { subTaskId, projectId } = req.params
-      let authorId = req.userId
-      let updatedSubtask = await ProjectSprintService.updateSubtaskService({ subTaskId, Taskstatus })
+      let { subTaskId, projectId } = req.params;
+      let authorId = req.userId;
+      let updatedSubtask = await ProjectSprintService.updateSubtaskService({
+        subTaskId,
+        Taskstatus,
+      });
 
       if (updatedSubtask.status === 200) {
         // now updating the activity
-      
+
         // creating the activity
         await UpdateActivities({
           name: authorId,
@@ -96,10 +99,33 @@ class ProjectSprintController {
           task: ` SubTask  ${title} to ${Taskstatus?.toLocaleUpperCase()}`,
           createdTaskId: projectId,
         });
-        return res.status(updatedSubtask?.status).json({ message: updatedSubtask?.message })
+        return res
+          .status(updatedSubtask?.status)
+          .json({ message: updatedSubtask?.message });
+      } else {
+        return res
+          .status(updatedSubtask?.status)
+          .json({ message: updatedSubtask?.message });
       }
-      else {
-        return res.status(updatedSubtask?.status).json({ message: updatedSubtask?.message })
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  // complete project controller
+
+  async completeProjectController(req, res) {
+    let { projectId, sprintId } = req.params;
+    try {
+      let CompleteSprint = await ProjectSprintService.CompleteSprintService({
+        projectId,
+        sprintId,
+      });
+
+      if (CompleteSprint) {
+        return res.status(CompleteSprint.status).json({
+          message: CompleteSprint.message,
+        });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });

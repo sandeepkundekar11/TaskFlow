@@ -126,12 +126,14 @@ class UserProjectController {
 
   // creating new Sprint
   async createNewSprint(req, res) {
-    const { name } = req.body;
+    // const { name } = req.body;
     let { projectId } = req.params;
     let author = req.userId;
     try {
-      if (!name) {
-        return res.status(404).json({ message: "Enter all detals" });
+      if (!projectId) {
+        return res
+          .status(404)
+          .json({ message: "Enter all detals project id is missing" });
       }
 
       // check sprint is already running or not if it running then no need to create new sprint
@@ -143,6 +145,12 @@ class UserProjectController {
       if (activeSprintPresent.length > 0) {
         return res.status(409).json({ message: "sprint is already running" });
       }
+
+      let sprintCount = await SprintModel.find({
+        project: projectId,
+      }).countDocuments();
+
+      let name = `Sprint-${sprintCount + 1}`;
       let newSprint = await UserProjectService.createNewSprint({
         name,
         projectId,
@@ -156,9 +164,11 @@ class UserProjectController {
           task: `new Spint ${name}`,
           createdTaskId: projectId,
         });
-        return res
-          .status(newSprint.status)
-          .json({ message: newSprint.message, sprintId: newSprint.sprintId });
+        return res.status(newSprint.status).json({
+          message: newSprint.message,
+          sprintId: newSprint.sprintId,
+          Sprintname: name,
+        });
       }
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -171,7 +181,7 @@ class UserProjectController {
     const { startDate, endDate, Tasks, isStartSprint = false } = req.body;
     const author = req.userId;
     const { projectId, sprintId } = req.params;
-    if (!startDate && !endDate && !Tasks &&!isStartSprint) {
+    if (!startDate && !endDate && !Tasks && !isStartSprint) {
       return res.status(404).json({ message: "Provide all information" });
     }
     try {
@@ -181,7 +191,7 @@ class UserProjectController {
         endDate,
         Tasks,
         sprintId,
-        isStartSprint
+        isStartSprint,
       });
 
       // getting the sprint

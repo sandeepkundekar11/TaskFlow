@@ -65,6 +65,7 @@ class UserProjectService {
         name,
         projectId,
       });
+
       if (createNewSprint) {
         return {
           status: 200,
@@ -78,14 +79,21 @@ class UserProjectService {
   }
 
   // updating the sprint
-  async updateSprintService({ startDate, endDate, Tasks, sprintId, isStartSprint = false }) {
+  async updateSprintService({
+    startDate,
+    endDate,
+    Tasks,
+    sprintId,
+    isStartSprint = false,
+  }) {
     try {
-
-
       if (startDate && endDate) {
-        let validDuration = isValidProjectDuration(startDate, endDate, 6)
+        let validDuration = isValidProjectDuration(startDate, endDate, 6);
         if (!validDuration) {
-          return { status: 400, message: "sprint duration should be Allist 6 days" }
+          return {
+            status: 400,
+            message: "sprint duration should be Allist 6 days",
+          };
         }
       }
 
@@ -93,16 +101,18 @@ class UserProjectService {
       if (isStartSprint) {
         // first we will check that sprint should have atlist 4 tasks
 
-        let sprintTasks = await SprintModel.findOne({ _id: sprintId }, "Tasks startDate endDate")
+        let sprintTasks = await SprintModel.findOne(
+          { _id: sprintId },
+          "Tasks startDate endDate"
+        );
         if (sprintTasks.Tasks.length < 4) {
-          return { status: 400, message: "Sprint should have Atlist 4 Tasks" }
+          return { status: 400, message: "Sprint should have Atlist 4 Tasks" };
+        } else if (!sprintTasks.startDate || !sprintTasks.endDate) {
+          return { status: 400, message: "Sprint Duration has not updated" };
         }
-        else if (!sprintTasks.startDate || !sprintTasks.endDate) {
-          return { status: 400, message: "Sprint Duration has not updated" }
-        }
-        let startSprint = await UserProjectRepo.StartSprintRepo(sprintId)
+        let startSprint = await UserProjectRepo.StartSprintRepo(sprintId);
         if (startSprint) {
-          return { status: 200, message: "sprint has started" }
+          return { status: 200, message: "sprint has started" };
         }
       }
       //else updating the sprint
@@ -127,7 +137,7 @@ class UserProjectService {
     try {
       let deleteTask = await UserProjectRepo.removeTaskFromSprint({
         Task,
-        sprintId
+        sprintId,
       });
       if (deleteTask) {
         return { status: 200, message: "Task has Removed Successfully" };

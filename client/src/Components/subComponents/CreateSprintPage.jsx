@@ -258,7 +258,7 @@ const CreateSprint = () => {
     if (createNewSprintMessage?.sprintId) {
       const newSprint = {
         _id: createNewSprintMessage?.sprintId,
-        name: `Sprint-${BackLogsInfo?.sprint.length + 1}`,
+        name: createNewSprintMessage?.Sprintname,
         project: projectId,
         Tasks: [],
         isCompleted: false,
@@ -274,7 +274,7 @@ const CreateSprint = () => {
   }, [createNewSprintMessage?.sprintId]);
   // creating new Sprint and update the backlog arr
   const createTheSprint = () => {
-    CreateNewSprint({ name: `Sprint-${BackLogsInfo?.sprint.length + 1}` });
+    CreateNewSprint();
   };
 
   return (
